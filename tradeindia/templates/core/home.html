@@ -1,0 +1,326 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block title %}{{ site_name }} - Buy and Sell Anything in India{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section py-5">
+    <div class="container">
+        <div class="row align-items-center min-vh-50">
+            <div class="col-lg-6 fade-in-up">
+                <h1 class="display-4 fw-bold mb-4">
+                    Welcome to <span class="text-gradient">TradeIndia</span>
+                </h1>
+                <p class="lead mb-4">
+                    India's fastest growing marketplace to buy and sell anything. 
+                    Join millions of users trading across all states and districts.
+                </p>
+                
+                <!-- Search Box -->
+                <div class="search-box">
+                    <form action="{% url 'search:listing_search' %}" method="get">
+                        <div class="row g-3">
+                            <div class="col-md-5">
+                                <input type="text" name="q" class="form-control form-control-lg form-control-glass" 
+                                       placeholder="What are you looking for?">
+                            </div>
+                            <div class="col-md-4">
+                                <select name="state" class="form-select form-select-lg form-control-glass">
+                                    <option value="">All States</option>
+                                    {% for state_code, state_name in settings.INDIAN_STATES %}
+                                        <option value="{{ state_code }}">{{ state_name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <button type="submit" class="btn btn-gradient btn-lg w-100">
+                                    <i class="fas fa-search"></i> Search
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                
+                <!-- Popular Searches -->
+                <div class="mt-4">
+                    <p class="text-muted mb-2">Popular Searches:</p>
+                    <div class="d-flex flex-wrap gap-2">
+                        {% for search in popular_searches %}
+                        <a href="{% url 'search:listing_search' %}?q={{ search.term }}" 
+                           class="badge bg-white text-dark px-3 py-2 text-decoration-none">
+                            {{ search.term }}
+                        </a>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-6">
+                <div class="position-relative">
+                    <img src="{% static 'images/hero-illustration.svg' %}" alt="TradeIndia" class="img-fluid">
+                    
+                    <!-- Floating Stats -->
+                    <div class="position-absolute top-0 start-0 card-glass p-3 rounded-3 fade-in-up" style="animation-delay: 0.2s;">
+                        <h5 class="mb-0">{{ stats.total_users|intcomma }}+</h5>
+                        <small class="text-muted">Active Users</small>
+                    </div>
+                    
+                    <div class="position-absolute top-50 end-0 card-glass p-3 rounded-3 fade-in-up" style="animation-delay: 0.4s;">
+                        <h5 class="mb-0">{{ stats.total_listings|intcomma }}+</h5>
+                        <small class="text-muted">Live Listings</small>
+                    </div>
+                    
+                    <div class="position-absolute bottom-0 start-50 translate-middle-x card-glass p-3 rounded-3 fade-in-up" style="animation-delay: 0.6s;">
+                        <h5 class="mb-0">{{ stats.total_cities|intcomma }}+</h5>
+                        <small class="text-muted">Cities Covered</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Categories Section -->
+<section class="py-5">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="display-5 fw-bold">Browse by Category</h2>
+            <p class="lead text-muted">Find exactly what you're looking for</p>
+        </div>
+        
+        <div class="row g-4">
+            {% for category in popular_categories %}
+            <div class="col-lg-3 col-md-4 col-6">
+                <a href="{% url 'listings:category_detail' category.slug %}" class="text-decoration-none">
+                    <div class="category-card h-100">
+                        <div class="category-icon">
+                            <i class="{{ category.icon|default:'fas fa-tag' }}"></i>
+                        </div>
+                        <h5 class="mb-2">{{ category.name }}</h5>
+                        <p class="text-muted mb-0">{{ category.listing_count }} listings</p>
+                    </div>
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <div class="text-center mt-4">
+            <a href="{% url 'core:categories' %}" class="btn btn-outline-primary">
+                View All Categories <i class="fas fa-arrow-right ms-2"></i>
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- Featured Listings -->
+{% if featured_listings %}
+<section class="py-5 bg-light bg-opacity-50">
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h3 class="fw-bold mb-0">Featured Listings</h3>
+                <p class="text-muted">Premium listings from verified sellers</p>
+            </div>
+            <a href="{% url 'search:listing_search' %}?featured=true" class="btn btn-glass">
+                View All <i class="fas fa-arrow-right ms-2"></i>
+            </a>
+        </div>
+        
+        <div class="row g-4">
+            {% for listing in featured_listings %}
+            <div class="col-lg-3 col-md-6">
+                <div class="listing-card h-100">
+                    <div class="position-relative">
+                        {% if listing.images.exists %}
+                            <img src="{{ listing.images.first.image.url }}" alt="{{ listing.title }}" 
+                                 class="card-img-top" style="height: 200px; object-fit: cover;">
+                        {% else %}
+                            <img src="{% static 'images/no-image.jpg' %}" alt="{{ listing.title }}" 
+                                 class="card-img-top" style="height: 200px; object-fit: cover;">
+                        {% endif %}
+                        
+                        <span class="listing-badge">Featured</span>
+                        
+                        {% if listing.is_urgent %}
+                            <span class="badge bg-danger position-absolute top-0 start-0 m-2">Urgent</span>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="card-body">
+                        <h5 class="card-title text-truncate">{{ listing.title }}</h5>
+                        <p class="card-text text-muted small">
+                            <i class="fas fa-map-marker-alt"></i> {{ listing.location_display }}
+                        </p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h4 class="mb-0 text-primary">₹{{ listing.price|intcomma }}</h4>
+                            <small class="text-muted">{{ listing.created_at|naturaltime }}</small>
+                        </div>
+                    </div>
+                    
+                    <div class="card-footer bg-transparent">
+                        <a href="{{ listing.get_absolute_url }}" class="btn btn-gradient btn-sm w-100">
+                            View Details
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- Recent Listings -->
+<section class="py-5">
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h3 class="fw-bold mb-0">Recent Listings</h3>
+                <p class="text-muted">Fresh listings added by users</p>
+            </div>
+            <a href="{% url 'search:listing_search' %}" class="btn btn-glass">
+                View All <i class="fas fa-arrow-right ms-2"></i>
+            </a>
+        </div>
+        
+        <div class="row g-4">
+            {% for listing in recent_listings %}
+            <div class="col-lg-3 col-md-6">
+                <div class="listing-card h-100">
+                    <div class="position-relative">
+                        {% if listing.images.exists %}
+                            <img src="{{ listing.images.first.image.url }}" alt="{{ listing.title }}" 
+                                 class="card-img-top" style="height: 200px; object-fit: cover;">
+                        {% else %}
+                            <img src="{% static 'images/no-image.jpg' %}" alt="{{ listing.title }}" 
+                                 class="card-img-top" style="height: 200px; object-fit: cover;">
+                        {% endif %}
+                        
+                        {% if listing.discount_percentage > 0 %}
+                            <span class="badge bg-success position-absolute top-0 end-0 m-2">
+                                -{{ listing.discount_percentage }}%
+                            </span>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="card-body">
+                        <h5 class="card-title text-truncate">{{ listing.title }}</h5>
+                        <p class="card-text text-muted small">
+                            <i class="fas fa-map-marker-alt"></i> {{ listing.location_display }}
+                        </p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h4 class="mb-0 text-primary">₹{{ listing.price|intcomma }}</h4>
+                                {% if listing.original_price and listing.discount_percentage > 0 %}
+                                    <small class="text-muted text-decoration-line-through">
+                                        ₹{{ listing.original_price|intcomma }}
+                                    </small>
+                                {% endif %}
+                            </div>
+                            <small class="text-muted">{{ listing.created_at|naturaltime }}</small>
+                        </div>
+                    </div>
+                    
+                    <div class="card-footer bg-transparent">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <small class="text-muted">
+                                <i class="fas fa-eye"></i> {{ listing.views }}
+                            </small>
+                            <a href="{{ listing.get_absolute_url }}" class="btn btn-outline-primary btn-sm">
+                                View Details
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- How It Works -->
+<section class="py-5 bg-light bg-opacity-50">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="display-5 fw-bold">How It Works</h2>
+            <p class="lead text-muted">Start trading in 3 simple steps</p>
+        </div>
+        
+        <div class="row g-4">
+            <div class="col-md-4 text-center">
+                <div class="card-glass p-4 h-100">
+                    <div class="mb-3">
+                        <div class="rounded-circle bg-gradient text-white d-inline-flex align-items-center justify-content-center" 
+                             style="width: 80px; height: 80px;">
+                            <i class="fas fa-user-plus fa-2x"></i>
+                        </div>
+                    </div>
+                    <h4>1. Create Account</h4>
+                    <p class="text-muted">Sign up for free and verify your profile to start trading safely</p>
+                </div>
+            </div>
+            
+            <div class="col-md-4 text-center">
+                <div class="card-glass p-4 h-100">
+                    <div class="mb-3">
+                        <div class="rounded-circle bg-gradient text-white d-inline-flex align-items-center justify-content-center" 
+                             style="width: 80px; height: 80px;">
+                            <i class="fas fa-camera fa-2x"></i>
+                        </div>
+                    </div>
+                    <h4>2. Post Your Ad</h4>
+                    <p class="text-muted">Take photos, write description and set your price to list items</p>
+                </div>
+            </div>
+            
+            <div class="col-md-4 text-center">
+                <div class="card-glass p-4 h-100">
+                    <div class="mb-3">
+                        <div class="rounded-circle bg-gradient text-white d-inline-flex align-items-center justify-content-center" 
+                             style="width: 80px; height: 80px;">
+                            <i class="fas fa-handshake fa-2x"></i>
+                        </div>
+                    </div>
+                    <h4>3. Make a Deal</h4>
+                    <p class="text-muted">Chat with buyers/sellers and close deals safely</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="py-5">
+    <div class="container">
+        <div class="card-glass p-5 text-center">
+            <h2 class="display-5 fw-bold mb-4">Ready to Start Trading?</h2>
+            <p class="lead mb-4">Join millions of users buying and selling on TradeIndia</p>
+            <div class="d-flex gap-3 justify-content-center">
+                {% if not user.is_authenticated %}
+                    <a href="{% url 'account_signup' %}" class="btn btn-gradient btn-lg">
+                        <i class="fas fa-user-plus"></i> Sign Up Now
+                    </a>
+                {% endif %}
+                <a href="{% url 'listings:create' %}" class="btn btn-outline-primary btn-lg">
+                    <i class="fas fa-plus"></i> Post Free Ad
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+.text-gradient {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.min-vh-50 {
+    min-height: 50vh;
+}
+</style>
+{% endblock %}
