@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trade India - Buy & Sell Anything in India</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* Glassmorphism styles */
+        .glass {
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+        
+        .glass-dark {
+            background: rgba(0, 0, 0, 0.25);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .gradient-text {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .animate-float {
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .hover-scale {
+            transition: transform 0.3s ease;
+        }
+        
+        .hover-scale:hover {
+            transform: scale(1.05);
+        }
+        
+        .listing-card {
+            transition: all 0.3s ease;
+        }
+        
+        .listing-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-purple-400 via-pink-500 to-red-500">
+    <!-- Navigation -->
+    <nav class="glass sticky top-0 z-50 p-4">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+            <div class="flex items-center space-x-4">
+                <a href="/" class="text-2xl font-bold gradient-text">
+                    <i class="fas fa-exchange-alt mr-2"></i>Trade India
+                </a>
+                
+                <!-- Search Bar -->
+                <div class="hidden md:block relative">
+                    <div class="flex items-center glass rounded-full px-4 py-2 w-96">
+                        <input type="text" 
+                               id="global-search" 
+                               placeholder="Search for anything..." 
+                               class="bg-transparent w-full outline-none text-white placeholder-gray-300">
+                        <button class="text-white ml-2">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="flex items-center space-x-4">
+                <a href="/listings/create/" class="glass-dark px-4 py-2 rounded-full text-white hover:bg-white hover:bg-opacity-20 transition-all">
+                    <i class="fas fa-plus mr-2"></i>Sell Item
+                </a>
+                <a href="/accounts/login/" class="glass-dark px-4 py-2 rounded-full text-white hover:bg-white hover:bg-opacity-20 transition-all">
+                    Login
+                </a>
+                <a href="/accounts/register/" class="bg-white bg-opacity-20 px-4 py-2 rounded-full text-white hover:bg-opacity-30 transition-all">
+                    Register
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="min-h-screen">
+        <!-- Hero Section -->
+        <section class="relative py-20 px-4">
+            <div class="max-w-7xl mx-auto text-center">
+                <h1 class="text-6xl font-bold text-white mb-6 animate-float">
+                    Buy & Sell <span class="gradient-text">Anything</span> in India
+                </h1>
+                <p class="text-xl text-white mb-8 opacity-90">
+                    India's most trusted marketplace with AI-verified genuine listings
+                </p>
+                
+                <!-- Main Search -->
+                <div class="max-w-2xl mx-auto relative mb-12">
+                    <div class="flex glass rounded-full overflow-hidden">
+                        <input type="text" 
+                               placeholder="What are you looking for?" 
+                               class="flex-1 px-6 py-4 bg-transparent text-white placeholder-gray-300 outline-none">
+                        <select class="bg-transparent text-white px-4 outline-none">
+                            <option value="">All States</option>
+                            <option value="MH">Maharashtra</option>
+                            <option value="DL">Delhi</option>
+                            <option value="KA">Karnataka</option>
+                            <option value="TN">Tamil Nadu</option>
+                        </select>
+                        <button class="bg-white bg-opacity-20 px-8 py-4 text-white font-semibold hover:bg-opacity-30 transition-all">
+                            <i class="fas fa-search mr-2"></i>Search
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Quick Stats -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
+                    <div class="glass rounded-lg p-6 hover-scale">
+                        <div class="text-3xl font-bold text-white mb-2">10M+</div>
+                        <div class="text-gray-200">Active Listings</div>
+                    </div>
+                    <div class="glass rounded-lg p-6 hover-scale">
+                        <div class="text-3xl font-bold text-white mb-2">5M+</div>
+                        <div class="text-gray-200">Happy Users</div>
+                    </div>
+                    <div class="glass rounded-lg p-6 hover-scale">
+                        <div class="text-3xl font-bold text-white mb-2">99%</div>
+                        <div class="text-gray-200">AI Verified</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Categories Section -->
+        <section class="py-16 px-4">
+            <div class="max-w-7xl mx-auto">
+                <h2 class="text-4xl font-bold text-white text-center mb-12">
+                    Popular Categories
+                </h2>
+                <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6">
+                    <div class="glass rounded-lg p-6 text-center hover-scale cursor-pointer">
+                        <i class="fas fa-mobile-alt text-4xl text-white mb-4"></i>
+                        <h3 class="text-white font-semibold">Electronics</h3>
+                    </div>
+                    <div class="glass rounded-lg p-6 text-center hover-scale cursor-pointer">
+                        <i class="fas fa-car text-4xl text-white mb-4"></i>
+                        <h3 class="text-white font-semibold">Vehicles</h3>
+                    </div>
+                    <div class="glass rounded-lg p-6 text-center hover-scale cursor-pointer">
+                        <i class="fas fa-home text-4xl text-white mb-4"></i>
+                        <h3 class="text-white font-semibold">Property</h3>
+                    </div>
+                    <div class="glass rounded-lg p-6 text-center hover-scale cursor-pointer">
+                        <i class="fas fa-tshirt text-4xl text-white mb-4"></i>
+                        <h3 class="text-white font-semibold">Fashion</h3>
+                    </div>
+                    <div class="glass rounded-lg p-6 text-center hover-scale cursor-pointer">
+                        <i class="fas fa-couch text-4xl text-white mb-4"></i>
+                        <h3 class="text-white font-semibold">Furniture</h3>
+                    </div>
+                    <div class="glass rounded-lg p-6 text-center hover-scale cursor-pointer">
+                        <i class="fas fa-briefcase text-4xl text-white mb-4"></i>
+                        <h3 class="text-white font-semibold">Jobs</h3>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Featured Listings -->
+        <section class="py-16 px-4">
+            <div class="max-w-7xl mx-auto">
+                <div class="flex justify-between items-center mb-12">
+                    <h2 class="text-4xl font-bold text-white">Featured Listings</h2>
+                    <a href="/listings/" class="glass-dark px-6 py-2 rounded-full text-white hover:bg-white hover:bg-opacity-20 transition-all">
+                        View All
+                    </a>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <!-- Sample listing cards -->
+                    <div class="glass rounded-lg overflow-hidden listing-card">
+                        <div class="relative">
+                            <img src="https://via.placeholder.com/300x200?text=iPhone+15" alt="iPhone 15" class="w-full h-48 object-cover">
+                            <div class="absolute top-2 right-2">
+                                <span class="bg-green-500 text-white px-2 py-1 rounded-full text-xs font-semibold">
+                                    <i class="fas fa-check mr-1"></i>Verified
+                                </span>
+                            </div>
+                            <button class="absolute top-2 left-2 text-white hover:text-red-500 transition-colors">
+                                <i class="far fa-heart text-xl"></i>
+                            </button>
+                        </div>
+                        <div class="p-4">
+                            <h3 class="text-white font-semibold mb-2 truncate">iPhone 15 Pro - Excellent Condition</h3>
+                            <p class="text-gray-300 text-sm mb-3">Mumbai, Maharashtra</p>
+                            <div class="flex justify-between items-center">
+                                <span class="text-2xl font-bold text-white">₹95,000</span>
+                                <div class="flex items-center text-yellow-400">
+                                    <i class="fas fa-star text-xs"></i>
+                                    <span class="text-xs ml-1">4.8</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="glass rounded-lg overflow-hidden listing-card">
+                        <div class="relative">
+                            <img src="https://via.placeholder.com/300x200?text=Honda+City" alt="Honda City" class="w-full h-48 object-cover">
+                            <div class="absolute top-2 right-2">
+                                <span class="bg-green-500 text-white px-2 py-1 rounded-full text-xs font-semibold">
+                                    <i class="fas fa-check mr-1"></i>Verified
+                                </span>
+                            </div>
+                            <button class="absolute top-2 left-2 text-white hover:text-red-500 transition-colors">
+                                <i class="far fa-heart text-xl"></i>
+                            </button>
+                        </div>
+                        <div class="p-4">
+                            <h3 class="text-white font-semibold mb-2 truncate">Honda City 2020 - Well Maintained</h3>
+                            <p class="text-gray-300 text-sm mb-3">Delhi, NCR</p>
+                            <div class="flex justify-between items-center">
+                                <span class="text-2xl font-bold text-white">₹8.5 L</span>
+                                <div class="flex items-center text-yellow-400">
+                                    <i class="fas fa-star text-xs"></i>
+                                    <span class="text-xs ml-1">4.9</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="glass rounded-lg overflow-hidden listing-card">
+                        <div class="relative">
+                            <img src="https://via.placeholder.com/300x200?text=2BHK+Apartment" alt="2BHK Apartment" class="w-full h-48 object-cover">
+                            <div class="absolute top-2 right-2">
+                                <span class="bg-green-500 text-white px-2 py-1 rounded-full text-xs font-semibold">
+                                    <i class="fas fa-check mr-1"></i>Verified
+                                </span>
+                            </div>
+                            <button class="absolute top-2 left-2 text-white hover:text-red-500 transition-colors">
+                                <i class="far fa-heart text-xl"></i>
+                            </button>
+                        </div>
+                        <div class="p-4">
+                            <h3 class="text-white font-semibold mb-2 truncate">2BHK Apartment - Ready to Move</h3>
+                            <p class="text-gray-300 text-sm mb-3">Bangalore, Karnataka</p>
+                            <div class="flex justify-between items-center">
+                                <span class="text-2xl font-bold text-white">₹45 L</span>
+                                <div class="flex items-center text-yellow-400">
+                                    <i class="fas fa-star text-xs"></i>
+                                    <span class="text-xs ml-1">4.7</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="glass rounded-lg overflow-hidden listing-card">
+                        <div class="relative">
+                            <img src="https://via.placeholder.com/300x200?text=MacBook+Pro" alt="MacBook Pro" class="w-full h-48 object-cover">
+                            <div class="absolute top-2 right-2">
+                                <span class="bg-green-500 text-white px-2 py-1 rounded-full text-xs font-semibold">
+                                    <i class="fas fa-check mr-1"></i>Verified
+                                </span>
+                            </div>
+                            <button class="absolute top-2 left-2 text-white hover:text-red-500 transition-colors">
+                                <i class="far fa-heart text-xl"></i>
+                            </button>
+                        </div>
+                        <div class="p-4">
+                            <h3 class="text-white font-semibold mb-2 truncate">MacBook Pro M2 - Like New</h3>
+                            <p class="text-gray-300 text-sm mb-3">Pune, Maharashtra</p>
+                            <div class="flex justify-between items-center">
+                                <span class="text-2xl font-bold text-white">₹1.2 L</span>
+                                <div class="flex items-center text-yellow-400">
+                                    <i class="fas fa-star text-xs"></i>
+                                    <span class="text-xs ml-1">4.9</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- How It Works Section -->
+        <section class="py-16 px-4">
+            <div class="max-w-7xl mx-auto">
+                <h2 class="text-4xl font-bold text-white text-center mb-12">
+                    How Trade India Works
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div class="glass rounded-lg p-8 text-center hover-scale">
+                        <div class="w-16 h-16 bg-gradient-to-r from-blue-400 to-purple-500 rounded-full flex items-center justify-center mx-auto mb-6">
+                            <i class="fas fa-plus text-2xl text-white"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-white mb-4">1. List Your Item</h3>
+                        <p class="text-gray-300">Create a detailed listing with photos and description. Our AI will verify its authenticity.</p>
+                    </div>
+                    
+                    <div class="glass rounded-lg p-8 text-center hover-scale">
+                        <div class="w-16 h-16 bg-gradient-to-r from-green-400 to-blue-500 rounded-full flex items-center justify-center mx-auto mb-6">
+                            <i class="fas fa-search text-2xl text-white"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-white mb-4">2. Find Buyers</h3>
+                        <p class="text-gray-300">Potential buyers can search, filter, and find your listing easily with our smart search.</p>
+                    </div>
+                    
+                    <div class="glass rounded-lg p-8 text-center hover-scale">
+                        <div class="w-16 h-16 bg-gradient-to-r from-purple-400 to-pink-500 rounded-full flex items-center justify-center mx-auto mb-6">
+                            <i class="fas fa-handshake text-2xl text-white"></i>
+                        </div>
+                        <h3 class="text-xl font-bold text-white mb-4">3. Make the Deal</h3>
+                        <p class="text-gray-300">Connect with buyers, negotiate, and complete your transaction safely and securely.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- AI Verification Section -->
+        <section class="py-16 px-4">
+            <div class="max-w-7xl mx-auto">
+                <div class="glass rounded-lg p-12 text-center">
+                    <div class="w-20 h-20 bg-gradient-to-r from-purple-400 to-pink-500 rounded-full flex items-center justify-center mx-auto mb-8">
+                        <i class="fas fa-robot text-3xl text-white"></i>
+                    </div>
+                    <h2 class="text-4xl font-bold text-white mb-6">AI-Powered Verification</h2>
+                    <p class="text-xl text-gray-200 mb-8 max-w-3xl mx-auto">
+                        Every listing is verified by our advanced AI system to ensure authenticity and prevent fraud. 
+                        Get a genuineness score and verification badge for your listings.
+                    </p>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                        <div class="text-center">
+                            <div class="text-3xl font-bold text-green-400 mb-2">99.2%</div>
+                            <div class="text-gray-300">Accuracy Rate</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-3xl font-bold text-blue-400 mb-2">10M+</div>
+                            <div class="text-gray-300">Listings Verified</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-3xl font-bold text-purple-400 mb-2">24/7</div>
+                            <div class="text-gray-300">Monitoring</div>
+                        </div>
+                    </div>
+                    <button class="bg-gradient-to-r from-purple-500 to-pink-600 text-white px-8 py-4 rounded-lg font-semibold hover:from-purple-600 hover:to-pink-700 transition-all">
+                        Learn More About AI Verification
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA Section -->
+        <section class="py-16 px-4">
+            <div class="max-w-4xl mx-auto text-center">
+                <div class="glass rounded-lg p-12">
+                    <h2 class="text-4xl font-bold text-white mb-6">
+                        Ready to Start Trading?
+                    </h2>
+                    <p class="text-xl text-gray-200 mb-8">
+                        Join millions of users who trust Trade India for their buying and selling needs.
+                    </p>
+                    <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                        <a href="/accounts/register/" class="bg-gradient-to-r from-green-500 to-blue-600 text-white px-8 py-4 rounded-lg font-semibold hover:from-green-600 hover:to-blue-700 transition-all inline-flex items-center justify-center">
+                            <i class="fas fa-user-plus mr-2"></i>Create Account
+                        </a>
+                        <a href="/listings/create/" class="bg-gradient-to-r from-purple-500 to-pink-600 text-white px-8 py-4 rounded-lg font-semibold hover:from-purple-600 hover:to-pink-700 transition-all inline-flex items-center justify-center">
+                            <i class="fas fa-plus mr-2"></i>List Your Item
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="glass-dark mt-20 py-12">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <h3 class="text-xl font-bold text-white mb-4 gradient-text">Trade India</h3>
+                    <p class="text-gray-300">India's most trusted platform for buying and selling everything.</p>
+                </div>
+                <div>
+                    <h4 class="font-semibold text-white mb-4">Quick Links</h4>
+                    <ul class="space-y-2 text-gray-300">
+                        <li><a href="#" class="hover:text-white">About Us</a></li>
+                        <li><a href="#" class="hover:text-white">How it Works</a></li>
+                        <li><a href="#" class="hover:text-white">Safety Tips</a></li>
+                        <li><a href="#" class="hover:text-white">Contact</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold text-white mb-4">Categories</h4>
+                    <ul class="space-y-2 text-gray-300">
+                        <li><a href="#" class="hover:text-white">Electronics</a></li>
+                        <li><a href="#" class="hover:text-white">Vehicles</a></li>
+                        <li><a href="#" class="hover:text-white">Property</a></li>
+                        <li><a href="#" class="hover:text-white">Fashion</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold text-white mb-4">Connect</h4>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-300 hover:text-white">
+                            <i class="fab fa-facebook text-2xl"></i>
+                        </a>
+                        <a href="#" class="text-gray-300 hover:text-white">
+                            <i class="fab fa-twitter text-2xl"></i>
+                        </a>
+                        <a href="#" class="text-gray-300 hover:text-white">
+                            <i class="fab fa-instagram text-2xl"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <hr class="border-gray-600 my-8">
+            <div class="text-center text-gray-300">
+                <p>&copy; 2025 Trade India. All rights reserved. | Built with Django & AI</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script>
+        // Enhanced search functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInputs = document.querySelectorAll('input[placeholder*="search"], input[placeholder*="Search"]');
+            
+            searchInputs.forEach(input => {
+                input.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        const query = this.value.trim();
+                        if (query) {
+                            window.location.href = `/listings/?q=${encodeURIComponent(query)}`;
+                        }
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
