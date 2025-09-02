@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+{% block content %}
+<div class="container">
+  <h2>Create Listing</h2>
+  <form method="post" enctype="multipart/form-data" class="glass" style="padding:16px">
+    {% csrf_token %}
+    <div class="grid" style="grid-template-columns:1fr 1fr; gap:12px">
+      {{ form.title|add_class:'input' }}
+      {{ form.price|add_class:'input' }}
+      {{ form.category|add_class:'input' }}
+      {{ form.state|add_class:'input' }}
+      {{ form.district|add_class:'input' }}
+      {{ form.address|add_class:'input' }}
+      <div style="grid-column:1 / -1">{{ form.description|add_class:'input' }}</div>
+      <div style="grid-column:1 / -1"><label>Images</label><input multiple name="images" type="file" class="input" /></div>
+      <div>{{ form.is_active }}</div>
+    </div>
+    <button class="btn" type="submit" style="margin-top:12px">Publish</button>
+  </form>
+</div>
+{% endblock %}
+

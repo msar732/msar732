@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TradeIndia</title>
+    <link rel="stylesheet" href="/static/css/main.css" />
+</head>
+<body>
+    <header class="glass-nav">
+        <div class="container">
+            <a href="/" class="brand">TradeIndia</a>
+            <nav>
+                <a href="/listings/">Listings</a>
+                <a href="/accounts/login/">Login</a>
+                <a href="/accounts/signup/" class="pill">Sign up</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        {% include 'includes/messages.html' %}
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="footer glass">
+        <div class="container">&copy; {{ now|default:2025 }} TradeIndia</div>
+    </footer>
+    <script src="/static/js/main.js"></script>
+</body>
+</html>
+

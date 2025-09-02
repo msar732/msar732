@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<section class="glass search-hero">
+  <form method="get" action="/">
+    <div class="grid" style="grid-template-columns:2fr 1fr 1fr 1fr auto; gap:12px;">
+      <input class="input" type="text" name="q" placeholder="Search products, services, property..." value="{{ query }}" />
+      <select class="input" name="state" id="state-select"></select>
+      <select class="input" name="district" id="district-select"></select>
+      <select name="category">
+        <option value="">All Categories</option>
+        {% for c in categories %}
+          <option value="{{ c.slug }}">{{ c.name }}</option>
+        {% endfor %}
+      </select>
+      <button class="btn" type="submit">Search</button>
+    </div>
+  </form>
+</section>
+
+<section class="container" style="padding:0">
+  <div class="grid">
+    {% for item in page_obj.object_list %}
+      <a href="{{ item.get_absolute_url }}" class="card">
+        <img src="{{ item.primary_image_url }}" alt="{{ item.title }}" />
+        <div class="body">
+          <div class="badge">{{ item.category.name }}</div>
+          <h3 style="margin:8px 0 4px">{{ item.title }}</h3>
+          <div style="opacity:.8">₹ {{ item.price }} · {{ item.state.name }}, {{ item.district.name }}</div>
+          {% if item.is_featured %}<div style="margin-top:6px;color:#fbbf24">Featured</div>{% endif %}
+        </div>
+      </a>
+    {% empty %}
+      <div class="glass" style="padding:24px">No results yet. Try a different search.</div>
+    {% endfor %}
+  </div>
+
+  <div style="margin-top:16px; text-align:center">
+    {% if page_obj.has_previous %}
+      <a class="btn" href="?page={{ page_obj.previous_page_number }}">Prev</a>
+    {% endif %}
+    <span style="margin:0 8px">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+    {% if page_obj.has_next %}
+      <a class="btn" href="?page={{ page_obj.next_page_number }}">Next</a>
+    {% endif %}
+  </div>
+</section>
+
+<script>
+  // Minimal India states/districts dynamic loader placeholder
+  const states = [];
+  const districtsByState = {};
+  async function loadLocations(){
+    const res = await fetch('/search/locations.json');
+    const data = await res.json();
+    const stateSel = document.getElementById('state-select');
+    const districtSel = document.getElementById('district-select');
+    stateSel.innerHTML = '<option value="">All States</option>' + data.states.map(s=>`<option value="${s.id}">${s.name}</option>`).join('');
+    districtSel.innerHTML = '<option value="">All Districts</option>';
+    stateSel.addEventListener('change',()=>{
+      const d = data.districts.filter(x=>String(x.state_id)===stateSel.value);
+      districtSel.innerHTML = '<option value="">All Districts</option>' + d.map(x=>`<option value="${x.id}">${x.name}</option>`).join('');
+    });
+  }
+  loadLocations();
+</script>
+{% endblock %}
+

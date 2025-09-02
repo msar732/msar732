@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container row">
+  <div class="glass" style="padding:16px">
+    <div class="grid" style="grid-template-columns:1fr 1fr; gap:8px">
+      {% for img in item.images.all %}
+        <img class="glass" src="{{ img.image.url }}" alt="{{ img.caption|default:item.title }}" style="width:100%; height:260px; object-fit:cover" />
+      {% empty %}
+        <div class="glass" style="height:260px; display:flex; align-items:center; justify-content:center">No images</div>
+      {% endfor %}
+    </div>
+  </div>
+  <aside class="glass" style="padding:16px">
+    <div class="badge">{{ item.category.name }}</div>
+    <h1>{{ item.title }}</h1>
+    <div style="font-size:24px; font-weight:800">₹ {{ item.price }}</div>
+    <div>{{ item.address }}, {{ item.district.name }}, {{ item.state.name }}</div>
+    <div style="margin-top:6px">Genuine score: {{ item.ai_genuine_score|floatformat:2 }}</div>
+  </aside>
+  <div class="glass" style="padding:16px; grid-column:1 / -1">
+    <h3>Description</h3>
+    <p style="white-space:pre-line">{{ item.description }}</p>
+  </div>
+</div>
+{% endblock %}
+
