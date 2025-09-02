@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block title %}Trade India - Discover listings{% endblock %}
+{% block content %}
+<div class="glass p-6 rounded-2xl">
+	<form action="/listings/" method="get" class="grid grid-cols-1 gap-4">
+		<input class="input" type="text" name="q" placeholder="Search items, services, property..." />
+		<div class="grid grid-cols-1 gap-4">
+			<select name="state" class="input" id="state-select"></select>
+			<select name="district" class="input" id="district-select"></select>
+		</div>
+		<div>
+			<button class="btn">Search</button>
+			<a class="btn btn-outline" href="/listings/">Browse all</a>
+		</div>
+	</form>
+</div>
+
+<h2 class="mt-8 mb-4 font-extrabold text-2xl text-indigo-700">Featured</h2>
+<div class="grid grid-cols-1 grid-cols-2 grid-cols-3 gap-4" id="featured-grid"></div>
+
+{% endblock %}
+{% block extra_scripts %}
+<script>
+async function loadLocations(){
+	const res = await fetch('/locations/api/states_districts/');
+	if(!res.ok) return; 
+	const data = await res.json();
+	const stateSel = document.getElementById('state-select');
+	const districtSel = document.getElementById('district-select');
+	stateSel.innerHTML = '<option value="">All states</option>' + data.states.map(s=>`<option value="${s}">${s}</option>`).join('');
+	stateSel.addEventListener('change',()=>{
+		const d = data.districts[stateSel.value]||[];
+		districtSel.innerHTML = '<option value="">All districts</option>' + d.map(x=>`<option value="${x}">${x}</option>`).join('');
+	});
+	districtSel.innerHTML = '<option value="">All districts</option>';
+}
+async function loadFeatured(){
+	const res = await fetch('/listings/api/featured/');
+	if(!res.ok) return;
+	const items = await res.json();
+	const grid = document.getElementById('featured-grid');
+	grid.innerHTML = items.map(i=>`
+		<a href="/listings/${i.slug}/" class="card">
+			<img src="${i.thumbnail}" alt="${i.title}" />
+			<div class="card-body">
+				<div class="badge">${i.category}</div>
+				<h3>${i.title}</h3>
+				<p>${i.location}</p>
+			</div>
+		</a>
+	`).join('');
+}
+loadLocations();
+loadFeatured();
+</script>
+{% endblock %}

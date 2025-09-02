@@ -1,0 +1,16 @@
+{% extends "account/base.html" %}
+{% block inner %}
+<h1 class="text-2xl font-extrabold">Create account</h1>
+<form class="grid grid-cols-1 gap-4" method="post" action="{% url 'account_signup' %}">
+	{% csrf_token %}
+	{{ form.non_field_errors }}
+	<label>Email</label>
+	{{ form.email }}
+	<label>Password</label>
+	{{ form.password1 }}
+	<label>Repeat password</label>
+	{{ form.password2 }}
+	<button class="btn">Sign up</button>
+</form>
+<p>Already have an account? <a class="chip" href="{% url 'account_login' %}">Sign in</a></p>
+{% endblock %}

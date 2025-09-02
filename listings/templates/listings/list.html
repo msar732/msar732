@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% block title %}Browse listings{% endblock %}
+{% block content %}
+<div class="glass p-6 rounded-2xl">
+	<form method="get" class="grid grid-cols-1 gap-4">
+		<input class="input" type="text" name="q" value="{{ request.GET.q }}" placeholder="Search..." />
+		<div class="grid grid-cols-1 gap-4">
+			<select name="state" class="input" id="state-select"></select>
+			<select name="district" class="input" id="district-select"></select>
+		</div>
+		<button class="btn">Filter</button>
+	</form>
+</div>
+
+<div class="grid grid-cols-1 grid-cols-2 grid-cols-3 gap-4" id="list-grid">
+{% for obj in object_list %}
+	<a href="{{ obj.get_absolute_url }}" class="card">
+		{% with img=obj.images.all.0 %}
+			{% if img %}
+				<img src="{{ img.image.url }}" alt="{{ obj.title }}" />
+			{% endif %}
+		{% endwith %}
+		<div class="card-body">
+			<div class="badge">{{ obj.category.name }}</div>
+			<h3>{{ obj.title }}</h3>
+			<p>{{ obj.location_display }}</p>
+		</div>
+	</a>
+{% empty %}
+	<p>No listings found.</p>
+{% endfor %}
+</div>
+
+{% if is_paginated %}
+<div class="glass p-4 rounded-2xl mt-6 flex items-center gap-4">
+	{% if page_obj.has_previous %}
+		<a class="chip" href="?page={{ page_obj.previous_page_number }}">Previous</a>
+	{% endif %}
+	<span>Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+	{% if page_obj.has_next %}
+		<a class="chip" href="?page={{ page_obj.next_page_number }}">Next</a>
+	{% endif %}
+</div>
+{% endif %}
+
+{% endblock %}
+{% block extra_scripts %}
+<script>
+async function loadLocations(){
+	const res = await fetch('/locations/api/states_districts/');
+	if(!res.ok) return; 
+	const data = await res.json();
+	const stateSel = document.getElementById('state-select');
+	const districtSel = document.getElementById('district-select');
+	const qs = new URLSearchParams(window.location.search);
+	const state = qs.get('state')||''; const district = qs.get('district')||'';
+	stateSel.innerHTML = '<option value="">All states</option>' + data.states.map(s=>`<option ${s===state?'selected':''} value="${s}">${s}</option>`).join('');
+	const d = data.districts[state]||[];
+	districtSel.innerHTML = '<option value="">All districts</option>' + d.map(x=>`<option ${x===district?'selected':''} value="${x}">${x}</option>`).join('');
+	stateSel.addEventListener('change',()=>{
+		const d = data.districts[stateSel.value]||[];
+		districtSel.innerHTML = '<option value="">All districts</option>' + d.map(x=>`<option value="${x}">${x}</option>`).join('');
+	});
+}
+loadLocations();
+</script>
+{% endblock %}

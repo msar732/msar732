@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block title %}Post a listing{% endblock %}
+{% block content %}
+<div class="glass p-6 rounded-2xl">
+	<h1 class="text-2xl font-extrabold">Create Listing</h1>
+	<form method="post" enctype="multipart/form-data" class="grid grid-cols-1 gap-4">
+		{% csrf_token %}
+		{{ form.non_field_errors }}
+		{{ form.title.label_tag }}
+		{{ form.title }}
+		{{ form.description.label_tag }}
+		{{ form.description }}
+		<div class="grid grid-cols-1 grid-cols-2 gap-4">
+			<div>
+				{{ form.category.label_tag }}
+				{{ form.category }}
+			</div>
+			<div>
+				{{ form.listing_type.label_tag }}
+				{{ form.listing_type }}
+			</div>
+		</div>
+		{{ form.price.label_tag }}
+		{{ form.price }}
+		<div class="grid grid-cols-1 grid-cols-2 gap-4">
+			<div>
+				{{ form.state.label_tag }}
+				{{ form.state }}
+			</div>
+			<div>
+				{{ form.district.label_tag }}
+				{{ form.district }}
+			</div>
+		</div>
+		{{ form.city.label_tag }}
+		{{ form.city }}
+		{{ form.address.label_tag }}
+		{{ form.address }}
+		{{ form.latitude.label_tag }}
+		{{ form.latitude }}
+		{{ form.longitude.label_tag }}
+		{{ form.longitude }}
+		<label>Images</label>
+		{{ form.images }}
+		<button class="btn">Submit</button>
+	</form>
+</div>
+{% endblock %}
