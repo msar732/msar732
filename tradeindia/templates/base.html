@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Trade India - India's #1 Marketplace{% endblock %}</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* Enhanced glassmorphism styles */
+        .glass {
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+        
+        .glass-dark {
+            background: rgba(0, 0, 0, 0.25);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .gradient-text {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        /* Mega menu styles */
+        .mega-menu {
+            transform: translateY(-10px);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .mega-menu.active {
+            transform: translateY(0);
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        /* Navigation hover effects */
+        .nav-item:hover .mega-menu {
+            transform: translateY(0);
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        /* Animated icons */
+        .icon-bounce:hover {
+            animation: bounce 0.6s;
+        }
+        
+        @keyframes bounce {
+            0%, 20%, 53%, 80%, 100% {
+                animation-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1.000);
+                transform: translate3d(0,0,0);
+            }
+            40%, 43% {
+                animation-timing-function: cubic-bezier(0.755, 0.050, 0.855, 0.060);
+                transform: translate3d(0, -10px, 0);
+            }
+            70% {
+                animation-timing-function: cubic-bezier(0.755, 0.050, 0.855, 0.060);
+                transform: translate3d(0, -5px, 0);
+            }
+            90% {
+                transform: translate3d(0,-2px,0);
+            }
+        }
+        
+        /* Category cards */
+        .category-card {
+            transition: all 0.3s ease;
+            transform: translateY(0);
+        }
+        
+        .category-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+        
+        /* Listing cards */
+        .listing-card {
+            transition: all 0.3s ease;
+        }
+        
+        .listing-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+        
+        .hover-scale {
+            transition: transform 0.3s ease;
+        }
+        
+        .hover-scale:hover {
+            transform: scale(1.05);
+        }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+<body class="min-h-screen bg-gradient-to-br from-purple-400 via-pink-500 to-red-500">
+    <!-- Enhanced Navigation -->
+    <nav class="glass sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto">
+            <!-- Top Bar -->
+            <div class="flex items-center justify-between p-4">
+                <div class="flex items-center space-x-8">
+                    <!-- Logo -->
+                    <a href="/" class="text-2xl font-bold gradient-text">
+                        <i class="fas fa-exchange-alt mr-2 icon-bounce"></i>Trade India
+                    </a>
+                    
+                    <!-- Search Bar -->
+                    <div class="hidden lg:block relative">
+                        <div class="flex items-center glass rounded-full px-4 py-2 w-96">
+                            <input type="text" 
+                                   id="global-search" 
+                                   placeholder="Search for anything..." 
+                                   class="bg-transparent w-full outline-none text-white placeholder-gray-300">
+                            <select class="bg-transparent text-white outline-none">
+                                <option value="">All Categories</option>
+                                <option value="motors">Motors</option>
+                                <option value="property">Property</option>
+                                <option value="jobs">Jobs</option>
+                                <option value="electronics">Electronics</option>
+                            </select>
+                            <button class="text-white ml-2 icon-bounce">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
+                        <div id="search-suggestions" class="absolute top-full left-0 w-full mt-1 glass-dark rounded-lg hidden max-h-96 overflow-y-auto"></div>
+                    </div>
+                </div>
+                
+                <!-- User Actions -->
+                <div class="flex items-center space-x-4">
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'listings:create' %}" class="glass-dark px-4 py-2 rounded-full text-white hover:bg-white hover:bg-opacity-20 transition-all icon-bounce">
+                            <i class="fas fa-plus mr-2"></i>Sell
+                        </a>
+                        <div class="relative nav-item">
+                            <button class="flex items-center space-x-2 glass-dark px-3 py-2 rounded-full">
+                                {% if user.profile_image %}
+                                    <img src="{{ user.profile_image.url }}" alt="Profile" class="w-8 h-8 rounded-full">
+                                {% else %}
+                                    <div class="w-8 h-8 bg-gradient-to-r from-blue-400 to-purple-500 rounded-full flex items-center justify-center text-white font-bold">
+                                        {{ user.username|first|upper }}
+                                    </div>
+                                {% endif %}
+                                <span class="text-white">{{ user.username }}</span>
+                                <i class="fas fa-chevron-down text-white text-sm"></i>
+                            </button>
+                        </div>
+                    {% else %}
+                        <a href="{% url 'accounts:login' %}" class="glass-dark px-4 py-2 rounded-full text-white hover:bg-white hover:bg-opacity-20 transition-all">
+                            Login
+                        </a>
+                        <a href="{% url 'accounts:register' %}" class="bg-white bg-opacity-20 px-4 py-2 rounded-full text-white hover:bg-opacity-30 transition-all">
+                            Register
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Main Navigation Menu -->
+            <div class="border-t border-white border-opacity-20">
+                <div class="flex items-center justify-center space-x-8 p-4">
+                    
+                    <!-- Motors Menu -->
+                    <div class="relative nav-item">
+                        <a href="/motors/" class="flex items-center space-x-2 text-white hover:text-yellow-300 transition-colors">
+                            <i class="fas fa-car icon-bounce"></i>
+                            <span class="font-medium">Motors</span>
+                            <i class="fas fa-chevron-down text-xs"></i>
+                        </a>
+                    </div>
+                    
+                    <!-- Property Menu -->
+                    <div class="relative nav-item">
+                        <a href="/property/" class="flex items-center space-x-2 text-white hover:text-yellow-300 transition-colors">
+                            <i class="fas fa-home icon-bounce"></i>
+                            <span class="font-medium">Property</span>
+                            <i class="fas fa-chevron-down text-xs"></i>
+                        </a>
+                    </div>
+                    
+                    <!-- Jobs Menu -->
+                    <div class="relative nav-item">
+                        <a href="/jobs/" class="flex items-center space-x-2 text-white hover:text-yellow-300 transition-colors">
+                            <i class="fas fa-briefcase icon-bounce"></i>
+                            <span class="font-medium">Jobs</span>
+                            <i class="fas fa-chevron-down text-xs"></i>
+                        </a>
+                    </div>
+                    
+                    <!-- Electronics Menu -->
+                    <div class="relative nav-item">
+                        <a href="/electronics/" class="flex items-center space-x-2 text-white hover:text-yellow-300 transition-colors">
+                            <i class="fas fa-mobile-alt icon-bounce"></i>
+                            <span class="font-medium">Electronics</span>
+                            <i class="fas fa-chevron-down text-xs"></i>
+                        </a>
+                    </div>
+                    
+                    <!-- Services -->
+                    <div class="relative">
+                        <a href="/services/" class="flex items-center space-x-2 text-white hover:text-yellow-300 transition-colors">
+                            <i class="fas fa-tools icon-bounce"></i>
+                            <span class="font-medium">Services</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="min-h-screen">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Enhanced Footer -->
+    <footer class="glass-dark mt-20 py-12">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-5 gap-8">
+                <div class="md:col-span-2">
+                    <h3 class="text-2xl font-bold gradient-text mb-4">
+                        <i class="fas fa-exchange-alt mr-2"></i>Trade India
+                    </h3>
+                    <p class="text-gray-300 mb-4">India's most trusted marketplace with AI-powered verification, connecting millions of buyers and sellers across the nation.</p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-300 hover:text-white transition-colors">
+                            <i class="fab fa-facebook text-2xl"></i>
+                        </a>
+                        <a href="#" class="text-gray-300 hover:text-white transition-colors">
+                            <i class="fab fa-twitter text-2xl"></i>
+                        </a>
+                        <a href="#" class="text-gray-300 hover:text-white transition-colors">
+                            <i class="fab fa-instagram text-2xl"></i>
+                        </a>
+                        <a href="#" class="text-gray-300 hover:text-white transition-colors">
+                            <i class="fab fa-youtube text-2xl"></i>
+                        </a>
+                    </div>
+                </div>
+                <div>
+                    <h4 class="font-semibold text-white mb-4">Popular Categories</h4>
+                    <ul class="space-y-2 text-gray-300">
+                        <li><a href="/motors/" class="hover:text-white transition-colors">Motors</a></li>
+                        <li><a href="/property/" class="hover:text-white transition-colors">Property</a></li>
+                        <li><a href="/jobs/" class="hover:text-white transition-colors">Jobs</a></li>
+                        <li><a href="/electronics/" class="hover:text-white transition-colors">Electronics</a></li>
+                        <li><a href="/fashion/" class="hover:text-white transition-colors">Fashion</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold text-white mb-4">Support</h4>
+                    <ul class="space-y-2 text-gray-300">
+                        <li><a href="/help/" class="hover:text-white transition-colors">Help Center</a></li>
+                        <li><a href="/safety/" class="hover:text-white transition-colors">Safety Tips</a></li>
+                        <li><a href="/contact/" class="hover:text-white transition-colors">Contact Us</a></li>
+                        <li><a href="/feedback/" class="hover:text-white transition-colors">Feedback</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold text-white mb-4">Company</h4>
+                    <ul class="space-y-2 text-gray-300">
+                        <li><a href="/about/" class="hover:text-white transition-colors">About Trade India</a></li>
+                        <li><a href="/careers/" class="hover:text-white transition-colors">Careers</a></li>
+                        <li><a href="/privacy/" class="hover:text-white transition-colors">Privacy Policy</a></li>
+                        <li><a href="/terms/" class="hover:text-white transition-colors">Terms of Service</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- Bottom Footer -->
+            <hr class="border-gray-600 my-8">
+            <div class="flex flex-col md:flex-row justify-between items-center text-gray-300">
+                <p>&copy; 2025 Trade India. All rights reserved. | Built with Django & AI</p>
+                <div class="flex items-center space-x-4 mt-4 md:mt-0">
+                    <span class="flex items-center">
+                        <i class="fas fa-shield-alt text-green-400 mr-2"></i>
+                        AI Verified Platform
+                    </span>
+                    <span class="flex items-center">
+                        <i class="fas fa-users text-blue-400 mr-2"></i>
+                        10M+ Users
+                    </span>
+                    <span class="flex items-center">
+                        <i class="fas fa-star text-yellow-400 mr-2"></i>
+                        4.8/5 Rating
+                    </span>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/alpinejs/3.10.3/cdn.min.js" defer></script>
+    <script>
+        // Global search functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.getElementById('global-search');
+            const suggestionsDiv = document.getElementById('search-suggestions');
+            let searchTimeout;
+
+            if (searchInput) {
+                searchInput.addEventListener('input', function() {
+                    clearTimeout(searchTimeout);
+                    const query = this.value.trim();
+                    
+                    if (query.length < 2) {
+                        suggestionsDiv.classList.add('hidden');
+                        return;
+                    }
+                    
+                    searchTimeout = setTimeout(() => {
+                        fetchSearchSuggestions(query);
+                    }, 300);
+                });
+
+                searchInput.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        performSearch(this.value);
+                    }
+                });
+            }
+        });
+
+        function fetchSearchSuggestions(query) {
+            fetch(`/search/suggestions/?q=${encodeURIComponent(query)}`)
+                .then(response => response.json())
+                .then(data => {
+                    displaySuggestions(data);
+                })
+                .catch(error => console.error('Search error:', error));
+        }
+
+        function displaySuggestions(data) {
+            const suggestionsDiv = document.getElementById('search-suggestions');
+            let html = '';
+            
+            if (data.suggestions && data.suggestions.length > 0) {
+                data.suggestions.forEach(suggestion => {
+                    html += `<a href="/search/?q=${encodeURIComponent(suggestion.query)}" class="block px-4 py-2 text-white hover:bg-white hover:bg-opacity-10 transition-colors">
+                        ${suggestion.title}
+                    </a>`;
+                });
+            }
+            
+            if (html) {
+                suggestionsDiv.innerHTML = html;
+                suggestionsDiv.classList.remove('hidden');
+            } else {
+                suggestionsDiv.classList.add('hidden');
+            }
+        }
+
+        function performSearch(query) {
+            if (query.trim()) {
+                window.location.href = `/search/?q=${encodeURIComponent(query)}`;
+            }
+        }
+
+        function showToast(message, type = 'info') {
+            const toast = document.createElement('div');
+            toast.className = `fixed top-4 right-4 px-6 py-4 rounded-lg glass-dark text-white z-50 transform translate-x-full transition-transform duration-300`;
+            
+            const icon = type === 'success' ? 'fas fa-check-circle text-green-400' :
+                        type === 'error' ? 'fas fa-exclamation-circle text-red-400' :
+                        type === 'warning' ? 'fas fa-exclamation-triangle text-yellow-400' :
+                        'fas fa-info-circle text-blue-400';
+            
+            toast.innerHTML = `
+                <div class="flex items-center">
+                    <i class="${icon} mr-3"></i>
+                    <span>${message}</span>
+                    <button onclick="this.parentElement.parentElement.remove()" class="ml-4 text-gray-300 hover:text-white">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            `;
+            
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.classList.remove('translate-x-full');
+            }, 100);
+            
+            setTimeout(() => {
+                toast.classList.add('translate-x-full');
+                setTimeout(() => toast.remove(), 300);
+            }, 5000);
+        }
+    </script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

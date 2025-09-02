@@ -1,0 +1,173 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="relative overflow-hidden">
+    <!-- Hero Section -->
+    <section class="relative py-20 px-4">
+        <div class="max-w-7xl mx-auto text-center">
+            <h1 class="text-6xl font-bold text-white mb-6 animate-float">
+                Buy & Sell <span class="gradient-text">Anything</span> in India
+            </h1>
+            <p class="text-xl text-white mb-8 opacity-90">
+                India's most trusted marketplace with AI-verified genuine listings
+            </p>
+            
+            <!-- Main Search -->
+            <div class="max-w-2xl mx-auto relative mb-12">
+                <div class="flex glass rounded-full overflow-hidden">
+                    <input type="text" 
+                           placeholder="What are you looking for?" 
+                           class="flex-1 px-6 py-4 bg-transparent text-white placeholder-gray-300 outline-none">
+                    <select class="bg-transparent text-white px-4 outline-none">
+                        <option value="">All States</option>
+                        <option value="MH">Maharashtra</option>
+                        <option value="KA">Karnataka</option>
+                        <option value="TN">Tamil Nadu</option>
+                        <option value="DL">Delhi</option>
+                    </select>
+                    <button class="bg-white bg-opacity-20 px-8 py-4 text-white font-semibold hover:bg-opacity-30 transition-all">
+                        <i class="fas fa-search mr-2"></i>Search
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Quick Stats -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-16">
+                <div class="glass rounded-lg p-6 hover-scale">
+                    <div class="text-3xl font-bold text-white mb-2">10M+</div>
+                    <div class="text-gray-200">Active Listings</div>
+                </div>
+                <div class="glass rounded-lg p-6 hover-scale">
+                    <div class="text-3xl font-bold text-white mb-2">5M+</div>
+                    <div class="text-gray-200">Happy Users</div>
+                </div>
+                <div class="glass rounded-lg p-6 hover-scale">
+                    <div class="text-3xl font-bold text-white mb-2">99%</div>
+                    <div class="text-gray-200">AI Verified</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Categories Section -->
+    <section class="py-16 px-4">
+        <div class="max-w-7xl mx-auto">
+            <h2 class="text-4xl font-bold text-white text-center mb-12">
+                Popular Categories
+            </h2>
+            <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6">
+                <a href="/electronics/" class="glass rounded-lg p-6 text-center hover-scale cursor-pointer">
+                    <i class="fas fa-mobile-alt text-4xl text-blue-400 mb-4"></i>
+                    <h3 class="text-white font-semibold">Electronics</h3>
+                </a>
+                <a href="/motors/" class="glass rounded-lg p-6 text-center hover-scale cursor-pointer">
+                    <i class="fas fa-car text-4xl text-green-400 mb-4"></i>
+                    <h3 class="text-white font-semibold">Vehicles</h3>
+                </a>
+                <a href="/property/" class="glass rounded-lg p-6 text-center hover-scale cursor-pointer">
+                    <i class="fas fa-home text-4xl text-yellow-400 mb-4"></i>
+                    <h3 class="text-white font-semibold">Property</h3>
+                </a>
+                <a href="/fashion/" class="glass rounded-lg p-6 text-center hover-scale cursor-pointer">
+                    <i class="fas fa-tshirt text-4xl text-pink-400 mb-4"></i>
+                    <h3 class="text-white font-semibold">Fashion</h3>
+                </a>
+                <a href="/home-living/" class="glass rounded-lg p-6 text-center hover-scale cursor-pointer">
+                    <i class="fas fa-couch text-4xl text-purple-400 mb-4"></i>
+                    <h3 class="text-white font-semibold">Furniture</h3>
+                </a>
+                <a href="/jobs/" class="glass rounded-lg p-6 text-center hover-scale cursor-pointer">
+                    <i class="fas fa-briefcase text-4xl text-orange-400 mb-4"></i>
+                    <h3 class="text-white font-semibold">Jobs</h3>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Listings -->
+    <section class="py-16 px-4">
+        <div class="max-w-7xl mx-auto">
+            <div class="flex justify-between items-center mb-12">
+                <h2 class="text-4xl font-bold text-white">Featured Listings</h2>
+                <a href="/listings/" class="glass-dark px-6 py-2 rounded-full text-white hover:bg-white hover:bg-opacity-20 transition-all">
+                    View All
+                </a>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                {% for listing in featured_listings %}
+                    <div class="glass rounded-lg overflow-hidden listing-card">
+                        <div class="relative">
+                            {% if listing.images.exists %}
+                                <img src="{{ listing.images.first.image.url }}" alt="{{ listing.title }}" class="w-full h-48 object-cover">
+                            {% else %}
+                                <div class="w-full h-48 bg-gradient-to-br from-gray-400 to-gray-600 flex items-center justify-center">
+                                    <i class="fas fa-image text-4xl text-white opacity-50"></i>
+                                </div>
+                            {% endif %}
+                            
+                            {% if listing.is_verified %}
+                                <div class="absolute top-2 right-2">
+                                    <span class="bg-green-500 text-white px-2 py-1 rounded-full text-xs font-semibold">
+                                        <i class="fas fa-check mr-1"></i>Verified
+                                    </span>
+                                </div>
+                            {% endif %}
+                            
+                            {% if user.is_authenticated %}
+                                <button class="absolute top-2 left-2 text-white hover:text-red-500 transition-colors">
+                                    <i class="far fa-heart text-xl"></i>
+                                </button>
+                            {% endif %}
+                        </div>
+                        <div class="p-4">
+                            <h3 class="text-white font-semibold mb-2 truncate">{{ listing.title }}</h3>
+                            <p class="text-gray-300 text-sm mb-3">{{ listing.district }}, {{ listing.state }}</p>
+                            <div class="flex justify-between items-center">
+                                <span class="text-2xl font-bold text-green-400">₹{{ listing.price|floatformat:0 }}</span>
+                                {% if listing.ai_genuineness_score > 0.8 %}
+                                    <div class="flex items-center text-yellow-400">
+                                        <i class="fas fa-star text-xs"></i>
+                                        <span class="text-xs ml-1">{{ listing.ai_genuineness_score|floatformat:1 }}</span>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                {% empty %}
+                    <div class="col-span-full text-center py-12">
+                        <i class="fas fa-box-open text-6xl text-white opacity-30 mb-4"></i>
+                        <h3 class="text-2xl text-white font-semibold mb-2">No Featured Listings Yet</h3>
+                        <p class="text-gray-300 mb-6">Be the first to create a listing!</p>
+                        <a href="/listings/create/" class="bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-lg font-semibold transition-colors">
+                            <i class="fas fa-plus mr-2"></i>Create Listing
+                        </a>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+    <!-- Call to Action -->
+    <section class="py-16 px-4">
+        <div class="max-w-4xl mx-auto text-center">
+            <div class="glass rounded-lg p-12">
+                <h2 class="text-4xl font-bold text-white mb-6">
+                    Ready to Start Trading?
+                </h2>
+                <p class="text-xl text-gray-200 mb-8">
+                    Join millions of users buying and selling on India's most trusted platform
+                </p>
+                <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                    <a href="/listings/" class="bg-gradient-to-r from-blue-500 to-purple-600 text-white px-8 py-4 rounded-lg font-semibold hover:from-blue-600 hover:to-purple-700 transition-all inline-flex items-center justify-center">
+                        <i class="fas fa-search mr-2"></i>Browse Listings
+                    </a>
+                    <a href="/listings/create/" class="bg-gradient-to-r from-green-500 to-blue-600 text-white px-8 py-4 rounded-lg font-semibold hover:from-green-600 hover:to-blue-700 transition-all inline-flex items-center justify-center">
+                        <i class="fas fa-plus mr-2"></i>Sell Something
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+{% endblock %}
