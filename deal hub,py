@@ -7,6 +7,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 from django.core.cache import cache
 import joblib
 import os
+from django.db import models
 
 class MotorPricePredictor:
     """AI model for motor price prediction and analysis"""
@@ -296,6 +297,7 @@ class JobAlert(models.Model):
         return f"{self.user.username} - {self.alert_name}"
 
 # Enhanced templates - templates/property/home.html
+"""
 {% extends 'base.html' %}
 
 {% block title %}Property - Buy, Sell, Rent Properties in India | Trade India{% endblock %}
@@ -798,8 +800,10 @@ from sklearn.metrics.            </div>
     {% block extra_js %}{% endblock %}
 </body>
 </html>
+"""
 
 # Enhanced Motors Homepage - templates/motors/home.html
+"""
 {% extends 'base.html' %}
 
 {% block title %}Motors - Buy & Sell Cars, Bikes, Commercial Vehicles | Trade India{% endblock %}
@@ -1519,6 +1523,8 @@ from sklearn.metrics.            </div>
                     </div>
                 </div>
             </div>
+"""
+"""
         </div>
     </nav>
 
@@ -1604,40 +1610,8 @@ from sklearn.metrics.            </div>
                         4.8/5 Rating
                     </span>
                 </div>
-                # Status & Verification
-    status = models.CharField(
-        max_length=20,
-        choices=[
-            ('active', 'Active'),
-            ('sold', 'Sold'),
-            ('rented', 'Rented'),
-            ('expired', 'Expired')
-        ],
-        default='active'
-    )
-    is_featured = models.BooleanField(default=False)
-    is_verified = models.BooleanField(default=False)
-    ai_score = models.FloatField(default=0.0)
-    
-    # Analytics
-    view_count = models.PositiveIntegerField(default=0)
-    inquiry_count = models.PositiveIntegerField(default=0)
-    
-    # Timestamps
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-    expires_at = models.DateTimeField(null=True, blank=True)
-    
-    class Meta:
-        ordering = ['-created_at']
-        indexes = [
-            models.Index(fields=['property_type', 'listing_type', 'status']),
-            models.Index(fields=['price', 'carpet_area']),
-            models.Index(fields=['location']),
-        ]
-    
-    def __str__(self):
-        return f"{self.title} - {self.get_listing_type_display()}"
+"""
+                
 
 class PropertyImage(models.Model):
     listing = models.ForeignKey(PropertyListing, on_delete=models.CASCADE, related_name='images')
@@ -2213,6 +2187,7 @@ class Bid(models.Model):
         unique_together = ['auction', 'bidder', 'amount']
 
 # Enhanced templates - templates/base.html with navigation
+"""
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -2724,6 +2699,9 @@ from .models import MotorListing, MotorCategory, MotorMake, MotorModel, MotorIma
 from .forms import MotorListingForm, MotorImageForm, MotorInquiryForm
 from ai_verification.tasks import verify_motor_listing
 
+"""
+from ai_verification.tasks import verify_motor_listing
+
 def motors_home(request):
     """Motors marketplace homepage"""
     categories = MotorCategory.objects.filter(is_active=True)
@@ -3106,7 +3084,42 @@ class PropertyListing(models.Model):
     contact_phone = models.CharField(max_length=15)
     contact_email = models.EmailField(blank=True)
     
-    # Status &# templates/listings/detail.html
+    # Status
+    status = models.CharField(
+        max_length=20,
+        choices=[
+            ('active', 'Active'),
+            ('sold', 'Sold'),
+            ('rented', 'Rented'),
+            ('expired', 'Expired')
+        ],
+        default='active'
+    )
+    is_featured = models.BooleanField(default=False)
+    is_verified = models.BooleanField(default=False)
+    ai_score = models.FloatField(default=0.0)
+    
+    # Analytics
+    view_count = models.PositiveIntegerField(default=0)
+    inquiry_count = models.PositiveIntegerField(default=0)
+    
+    # Timestamps
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    expires_at = models.DateTimeField(null=True, blank=True)
+    
+    class Meta:
+        ordering = ['-created_at']
+        indexes = [
+            models.Index(fields=['property_type', 'listing_type', 'status']),
+            models.Index(fields=['price', 'carpet_area']),
+            models.Index(fields=['location']),
+        ]
+    
+    def __str__(self):
+        return f"{self.title} - {self.get_listing_type_display()}"
+
+"""
 {% extends 'base.html' %}
 
 {% block title %}{{ listing.title }} - Trade India{% endblock %}
@@ -3314,10 +3327,14 @@ class PropertyListing(models.Model):
     function changeMainImage(imageUrl) {
         document.querySelector('#main-image img').src = imageUrl;
     }
+
 </script>
 {% endblock %}
 
+"""
+
 # templates/listings/create.html
+"""
 {% extends 'base.html' %}
 
 {% block title %}Create Listing - Trade India{% endblock %}
@@ -3580,8 +3597,10 @@ class PropertyListing(models.Model):
     }
 </script>
 {% endblock %}
+"""
 
 # templates/accounts/login.html
+"""
 {% extends 'base.html' %}
 
 {% block title %}Login - Trade India{% endblock %}
@@ -3688,8 +3707,10 @@ class PropertyListing(models.Model):
     }
 </script>
 {% endblock %}
+"""
 
 # templates/accounts/register.html
+"""
 {% extends 'base.html' %}
 
 {% block title %}Register - Trade India{% endblock %}
@@ -3842,6 +3863,7 @@ class PropertyListing(models.Model):
     }
 </script>
 {% endblock %}
+"""
 
 # management/commands/populate_data.py
 from django.core.management.base import BaseCommand
@@ -5431,6 +5453,7 @@ urlpatterns = [
 ]
 
 # templates/base.html
+"""
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5739,8 +5762,10 @@ urlpatterns = [
     {% block extra_js %}{% endblock %}
 </body>
 </html>
+"""
 
 # templates/index.html
+"""
 {% extends 'base.html' %}
 
 {% block content %}
@@ -5876,3 +5901,4 @@ urlpatterns = [
                             <i class="far fa-heart text-xl"></i>
                         </button>
                     </div>
+"""
