@@ -7,6 +7,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 from django.core.cache import cache
 import joblib
 import os
+from django.db import models
 
 class MotorPricePredictor:
     """AI model for motor price prediction and analysis"""
@@ -5215,6 +5216,11 @@ def verify_listing_genuineness(listing_id):
     except Exception as e:
         logger.error(f"Error verifying listing {listing_id}: {str(e)}")
         return 0.0
+
+# Backward-compatible alias used by motors views
+@shared_task
+def verify_motor_listing(listing_id):
+    return verify_listing_genuineness(listing_id)
 
 def analyze_text_genuineness(title, description):
     """Analyze text for genuineness indicators"""
