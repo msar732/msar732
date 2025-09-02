@@ -1,0 +1,311 @@
+{% extends 'base.html' %}
+
+{% block title %}Browse Listings - Trade India{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Search and Filters -->
+    <div class="glass-card mb-4">
+        <h4 class="text-dark fw-bold mb-4">
+            <i class="fas fa-filter me-2"></i>Find What You're Looking For
+        </h4>
+        
+        <form method="GET" class="row g-3">
+            <div class="col-md-4">
+                <label class="form-label text-dark">Search</label>
+                <input type="text" name="q" class="form-control" placeholder="Search listings..." 
+                       value="{{ current_filters.q }}">
+            </div>
+            
+            <div class="col-md-2">
+                <label class="form-label text-dark">Category</label>
+                <select name="category" class="form-select">
+                    <option value="">All Categories</option>
+                    {% for category in categories %}
+                        <option value="{{ category.id }}" {% if current_filters.category == category.id|stringformat:"s" %}selected{% endif %}>
+                            {{ category.name }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div class="col-md-2">
+                <label class="form-label text-dark">State</label>
+                <select name="state" class="form-select" id="state-select">
+                    <option value="">All States</option>
+                    {% for state in states %}
+                        <option value="{{ state.id }}" {% if current_filters.state == state.id|stringformat:"s" %}selected{% endif %}>
+                            {{ state.name }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div class="col-md-2">
+                <label class="form-label text-dark">District</label>
+                <select name="district" class="form-select" id="district-select">
+                    <option value="">All Districts</option>
+                </select>
+            </div>
+            
+            <div class="col-md-2">
+                <label class="form-label text-dark">Type</label>
+                <select name="listing_type" class="form-select">
+                    <option value="">All Types</option>
+                    {% for type_key, type_label in listing_types %}
+                        <option value="{{ type_key }}" {% if current_filters.listing_type == type_key %}selected{% endif %}>
+                            {{ type_label }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div class="col-md-3">
+                <label class="form-label text-dark">Price Range</label>
+                <div class="input-group">
+                    <input type="number" name="min_price" class="form-control" placeholder="Min" 
+                           value="{{ current_filters.min_price }}">
+                    <span class="input-group-text">-</span>
+                    <input type="number" name="max_price" class="form-control" placeholder="Max" 
+                           value="{{ current_filters.max_price }}">
+                </div>
+            </div>
+            
+            <div class="col-md-3">
+                <label class="form-label text-dark">Sort By</label>
+                <select name="order_by" class="form-select">
+                    <option value="-created_at" {% if current_filters.order_by == "-created_at" %}selected{% endif %}>Newest First</option>
+                    <option value="created_at" {% if current_filters.order_by == "created_at" %}selected{% endif %}>Oldest First</option>
+                    <option value="price" {% if current_filters.order_by == "price" %}selected{% endif %}>Price: Low to High</option>
+                    <option value="-price" {% if current_filters.order_by == "-price" %}selected{% endif %}>Price: High to Low</option>
+                    <option value="-views" {% if current_filters.order_by == "-views" %}selected{% endif %}>Most Viewed</option>
+                </select>
+            </div>
+            
+            <div class="col-md-6">
+                <label class="form-label text-dark">&nbsp;</label>
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-primary-glass">
+                        <i class="fas fa-search me-2"></i>Search
+                    </button>
+                    <a href="{% url 'listings_web:list' %}" class="btn btn-glass">
+                        <i class="fas fa-times me-2"></i>Clear
+                    </a>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- Results Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h5 class="text-white mb-0">
+            {% if current_filters.q %}
+                Search results for "{{ current_filters.q }}"
+            {% else %}
+                All Listings
+            {% endif %}
+            <span class="text-light">({{ listings|length }} items)</span>
+        </h5>
+        
+        <div class="d-flex gap-2">
+            <button class="btn btn-glass btn-sm" onclick="toggleView('grid')" id="gridViewBtn">
+                <i class="fas fa-th"></i> Grid
+            </button>
+            <button class="btn btn-outline-light btn-sm" onclick="toggleView('list')" id="listViewBtn">
+                <i class="fas fa-list"></i> List
+            </button>
+        </div>
+    </div>
+
+    <!-- Listings Grid -->
+    <div id="listingsContainer" class="row">
+        {% for listing in listings %}
+            <div class="col-lg-3 col-md-4 col-sm-6 mb-4 listing-item">
+                <div class="listing-card">
+                    <div class="position-relative">
+                        {% if listing.get_main_image %}
+                            <img src="{{ listing.get_main_image.image.url }}" alt="{{ listing.title }}">
+                        {% else %}
+                            <div class="placeholder-img d-flex align-items-center justify-content-center" 
+                                 style="height: 200px; background: #f8f9fa;">
+                                <i class="fas fa-image text-muted fa-3x"></i>
+                            </div>
+                        {% endif %}
+                        
+                        <!-- Badges -->
+                        <div class="position-absolute top-0 start-0 p-2">
+                            {% if listing.is_featured %}
+                                <span class="status-badge status-featured">Featured</span>
+                            {% endif %}
+                            {% if listing.is_urgent %}
+                                <span class="badge bg-warning ms-1">Urgent</span>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Favorite Button -->
+                        {% if user.is_authenticated %}
+                            <button class="btn btn-sm btn-outline-light position-absolute top-0 end-0 m-2 favorite-btn" 
+                                    data-listing-id="{{ listing.id }}">
+                                <i class="far fa-heart"></i>
+                            </button>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="p-3">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <span class="status-badge status-{{ listing.listing_type }}">
+                                {{ listing.get_listing_type_display }}
+                            </span>
+                            {% if listing.is_verified %}
+                                <i class="fas fa-check-circle text-success" title="Verified Listing"></i>
+                            {% endif %}
+                        </div>
+                        
+                        <h6 class="card-title fw-semibold mb-2">
+                            <a href="{% url 'listings_web:detail' listing.pk %}" class="text-decoration-none text-dark">
+                                {{ listing.title|truncatechars:50 }}
+                            </a>
+                        </h6>
+                        
+                        <div class="price-tag mb-2">
+                            ₹{{ listing.price|floatformat:0 }}
+                            {% if listing.is_negotiable %}
+                                <small>(Negotiable)</small>
+                            {% endif %}
+                        </div>
+                        
+                        <p class="text-muted small mb-2">
+                            <i class="fas fa-map-marker-alt me-1"></i>
+                            {{ listing.get_location_string }}
+                        </p>
+                        
+                        <p class="text-muted small mb-3">
+                            {{ listing.description|truncatechars:80 }}
+                        </p>
+                        
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="d-flex align-items-center">
+                                {% if listing.seller.profile_picture %}
+                                    <img src="{{ listing.seller.profile_picture.url }}" alt="{{ listing.seller.username }}" 
+                                         class="rounded-circle me-2" style="width: 25px; height: 25px; object-fit: cover;">
+                                {% else %}
+                                    <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center me-2" 
+                                         style="width: 25px; height: 25px;">
+                                        <i class="fas fa-user text-white" style="font-size: 0.7rem;"></i>
+                                    </div>
+                                {% endif %}
+                                <small class="text-muted">{{ listing.seller.username }}</small>
+                            </div>
+                            <small class="text-muted">{{ listing.created_at|timesince }} ago</small>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between align-items-center mt-2 pt-2 border-top">
+                            <small class="text-muted">
+                                <i class="fas fa-eye me-1"></i>{{ listing.views }}
+                                <i class="fas fa-heart ms-2 me-1"></i>{{ listing.favorites_count }}
+                            </small>
+                            <a href="{% url 'listings_web:detail' listing.pk %}" class="btn btn-sm btn-primary-glass">
+                                View Details
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <div class="col-12">
+                <div class="glass-card text-center py-5">
+                    <i class="fas fa-search fa-3x text-muted mb-3"></i>
+                    <h4 class="text-dark">No listings found</h4>
+                    <p class="text-muted">Try adjusting your search criteria or browse all categories.</p>
+                    <a href="{% url 'listings_web:list' %}" class="btn btn-primary-glass">
+                        <i class="fas fa-list me-2"></i>Browse All Listings
+                    </a>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+    <!-- Pagination -->
+    {% if is_paginated %}
+        <div class="d-flex justify-content-center mt-5">
+            <nav aria-label="Listings pagination">
+                <ul class="pagination">
+                    {% if page_obj.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link glass" href="?{% for key, value in current_filters.items %}{% if key != 'page' %}{{ key }}={{ value }}&{% endif %}{% endfor %}page={{ page_obj.previous_page_number }}">
+                                <i class="fas fa-chevron-left"></i>
+                            </a>
+                        </li>
+                    {% endif %}
+                    
+                    {% for num in page_obj.paginator.page_range %}
+                        {% if page_obj.number == num %}
+                            <li class="page-item active">
+                                <span class="page-link bg-primary border-primary">{{ num }}</span>
+                            </li>
+                        {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                            <li class="page-item">
+                                <a class="page-link glass" href="?{% for key, value in current_filters.items %}{% if key != 'page' %}{{ key }}={{ value }}&{% endif %}{% endfor %}page={{ num }}">{{ num }}</a>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+                    
+                    {% if page_obj.has_next %}
+                        <li class="page-item">
+                            <a class="page-link glass" href="?{% for key, value in current_filters.items %}{% if key != 'page' %}{{ key }}={{ value }}&{% endif %}{% endfor %}page={{ page_obj.next_page_number }}">
+                                <i class="fas fa-chevron-right"></i>
+                            </a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+    {% endif %}
+</div>
+
+{% csrf_token %}
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // View toggle functionality
+    function toggleView(view) {
+        if (view === 'grid') {
+            $('#listingsContainer').removeClass('list-view').addClass('row');
+            $('.listing-item').removeClass('col-12').addClass('col-lg-3 col-md-4 col-sm-6');
+            $('#gridViewBtn').removeClass('btn-outline-light').addClass('btn-glass');
+            $('#listViewBtn').removeClass('btn-glass').addClass('btn-outline-light');
+        } else {
+            $('#listingsContainer').removeClass('row').addClass('list-view');
+            $('.listing-item').removeClass('col-lg-3 col-md-4 col-sm-6').addClass('col-12');
+            $('#listViewBtn').removeClass('btn-outline-light').addClass('btn-glass');
+            $('#gridViewBtn').removeClass('btn-glass').addClass('btn-outline-light');
+        }
+    }
+
+    // Auto-submit form on filter change
+    $('select[name="category"], select[name="state"], select[name="district"], select[name="listing_type"], select[name="order_by"]').change(function() {
+        $(this).closest('form').submit();
+    });
+</script>
+
+<style>
+    .list-view .listing-card {
+        display: flex;
+        flex-direction: row;
+        height: auto;
+    }
+    
+    .list-view .listing-card img {
+        width: 200px;
+        height: 150px;
+        border-radius: 15px 0 0 15px;
+    }
+    
+    .list-view .placeholder-img {
+        width: 200px;
+        height: 150px;
+        border-radius: 15px 0 0 15px;
+    }
+</style>
+{% endblock %}

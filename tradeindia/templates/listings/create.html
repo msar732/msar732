@@ -1,0 +1,257 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Create Listing - Trade India{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="glass-card">
+                <h2 class="text-dark fw-bold mb-4">
+                    <i class="fas fa-plus-circle me-2"></i>Create New Listing
+                </h2>
+                
+                <form method="POST" enctype="multipart/form-data" id="listingForm">
+                    {% csrf_token %}
+                    
+                    <!-- Basic Information -->
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <h5 class="text-dark fw-semibold mb-3">Basic Information</h5>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="{{ form.title.id_for_label }}" class="form-label text-dark">Title *</label>
+                                {{ form.title }}
+                                {% if form.title.errors %}
+                                    <div class="text-danger small">{{ form.title.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="{{ form.category.id_for_label }}" class="form-label text-dark">Category *</label>
+                                {{ form.category }}
+                                {% if form.category.errors %}
+                                    <div class="text-danger small">{{ form.category.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="col-12">
+                            <div class="mb-3">
+                                <label for="{{ form.description.id_for_label }}" class="form-label text-dark">Description *</label>
+                                {{ form.description }}
+                                {% if form.description.errors %}
+                                    <div class="text-danger small">{{ form.description.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="{{ form.condition.id_for_label }}" class="form-label text-dark">Condition</label>
+                                {{ form.condition }}
+                                {% if form.condition.errors %}
+                                    <div class="text-danger small">{{ form.condition.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="{{ form.listing_type.id_for_label }}" class="form-label text-dark">Listing Type *</label>
+                                {{ form.listing_type }}
+                                {% if form.listing_type.errors %}
+                                    <div class="text-danger small">{{ form.listing_type.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Pricing -->
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <h5 class="text-dark fw-semibold mb-3">Pricing</h5>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="{{ form.price.id_for_label }}" class="form-label text-dark">Price (₹) *</label>
+                                {{ form.price }}
+                                {% if form.price.errors %}
+                                    <div class="text-danger small">{{ form.price.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <div class="form-check mt-4">
+                                    {{ form.is_negotiable }}
+                                    <label for="{{ form.is_negotiable.id_for_label }}" class="form-check-label text-dark">
+                                        Price is negotiable
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Location -->
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <h5 class="text-dark fw-semibold mb-3">Location</h5>
+                        </div>
+                        
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="{{ form.state.id_for_label }}" class="form-label text-dark">State *</label>
+                                {{ form.state }}
+                                {% if form.state.errors %}
+                                    <div class="text-danger small">{{ form.state.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="{{ form.district.id_for_label }}" class="form-label text-dark">District *</label>
+                                {{ form.district }}
+                                {% if form.district.errors %}
+                                    <div class="text-danger small">{{ form.district.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="{{ form.city.id_for_label }}" class="form-label text-dark">City</label>
+                                {{ form.city }}
+                                {% if form.city.errors %}
+                                    <div class="text-danger small">{{ form.city.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-8">
+                            <div class="mb-3">
+                                <label for="{{ form.address.id_for_label }}" class="form-label text-dark">Address</label>
+                                {{ form.address }}
+                                {% if form.address.errors %}
+                                    <div class="text-danger small">{{ form.address.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="{{ form.pincode.id_for_label }}" class="form-label text-dark">Pincode</label>
+                                {{ form.pincode }}
+                                {% if form.pincode.errors %}
+                                    <div class="text-danger small">{{ form.pincode.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Images -->
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <h5 class="text-dark fw-semibold mb-3">Images</h5>
+                            <div class="mb-3">
+                                <label for="images" class="form-label text-dark">Upload Images (Max 10)</label>
+                                <input type="file" class="form-control" id="images" name="images" multiple accept="image/*">
+                                <div class="form-text">Upload up to 10 images. First image will be the main image.</div>
+                            </div>
+                            
+                            <!-- Image Preview -->
+                            <div id="imagePreview" class="row"></div>
+                        </div>
+                    </div>
+
+                    <!-- Additional Details -->
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <h5 class="text-dark fw-semibold mb-3">Additional Details</h5>
+                        </div>
+                        
+                        <div class="col-12">
+                            <div class="mb-3">
+                                <label for="{{ form.tags.id_for_label }}" class="form-label text-dark">Tags</label>
+                                {{ form.tags }}
+                                <div class="form-text">Add comma-separated tags to help buyers find your item</div>
+                                {% if form.tags.errors %}
+                                    <div class="text-danger small">{{ form.tags.errors }}</div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Submit Buttons -->
+                    <div class="d-flex gap-3">
+                        <button type="submit" name="action" value="publish" class="btn btn-primary-glass">
+                            <i class="fas fa-check me-2"></i>Publish Listing
+                        </button>
+                        <button type="submit" name="action" value="draft" class="btn btn-glass">
+                            <i class="fas fa-save me-2"></i>Save as Draft
+                        </button>
+                        <a href="{% url 'home' %}" class="btn btn-outline-secondary">
+                            <i class="fas fa-times me-2"></i>Cancel
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    $(document).ready(function() {
+        // Image preview functionality
+        $('#images').change(function() {
+            var files = this.files;
+            var preview = $('#imagePreview');
+            preview.empty();
+            
+            if (files.length > 10) {
+                alert('You can upload maximum 10 images');
+                this.value = '';
+                return;
+            }
+            
+            for (var i = 0; i < files.length; i++) {
+                var file = files[i];
+                var reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    var col = $('<div class="col-md-3 mb-3"></div>');
+                    var img = $('<img class="img-fluid rounded" style="height: 150px; width: 100%; object-fit: cover;">');
+                    img.attr('src', e.target.result);
+                    col.append(img);
+                    preview.append(col);
+                };
+                
+                reader.readAsDataURL(file);
+            }
+        });
+        
+        // Form submission handling
+        $('#listingForm').submit(function(e) {
+            var action = $('button[type="submit"]:focus').val();
+            if (action === 'draft') {
+                // Set status to draft
+                $('<input>').attr({
+                    type: 'hidden',
+                    name: 'status',
+                    value: 'draft'
+                }).appendTo(this);
+            }
+        });
+    });
+</script>
+{% endblock %}

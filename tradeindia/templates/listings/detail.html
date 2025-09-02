@@ -1,0 +1,424 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ listing.title }} - Trade India{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row">
+        <!-- Main Content -->
+        <div class="col-lg-8">
+            <!-- Image Gallery -->
+            <div class="glass-card mb-4">
+                {% if listing.images.all %}
+                    <div id="listingCarousel" class="carousel slide" data-bs-ride="carousel">
+                        <div class="carousel-inner">
+                            {% for image in listing.images.all %}
+                                <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                                    <img src="{{ image.image.url }}" class="d-block w-100" alt="{{ image.caption }}" style="height: 400px; object-fit: cover; border-radius: 15px;">
+                                    {% if image.caption %}
+                                        <div class="carousel-caption d-none d-md-block">
+                                            <p class="bg-dark bg-opacity-75 p-2 rounded">{{ image.caption }}</p>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            {% endfor %}
+                        </div>
+                        {% if listing.images.count > 1 %}
+                            <button class="carousel-control-prev" type="button" data-bs-target="#listingCarousel" data-bs-slide="prev">
+                                <span class="carousel-control-prev-icon"></span>
+                            </button>
+                            <button class="carousel-control-next" type="button" data-bs-target="#listingCarousel" data-bs-slide="next">
+                                <span class="carousel-control-next-icon"></span>
+                            </button>
+                        {% endif %}
+                    </div>
+                {% else %}
+                    <div class="placeholder-img d-flex align-items-center justify-content-center" style="height: 400px; background: #f8f9fa; border-radius: 15px;">
+                        <i class="fas fa-image text-muted fa-5x"></i>
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Listing Details -->
+            <div class="glass-card">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <div>
+                        <h1 class="text-dark fw-bold mb-2">{{ listing.title }}</h1>
+                        <div class="d-flex align-items-center gap-2 mb-3">
+                            <span class="status-badge status-{{ listing.status }}">{{ listing.get_status_display }}</span>
+                            {% if listing.is_featured %}
+                                <span class="status-badge status-featured">Featured</span>
+                            {% endif %}
+                            {% if listing.is_urgent %}
+                                <span class="badge bg-warning">Urgent</span>
+                            {% endif %}
+                            {% if listing.is_verified %}
+                                <span class="badge bg-success">
+                                    <i class="fas fa-check-circle me-1"></i>Verified
+                                </span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="text-end">
+                        <div class="price-tag mb-2">
+                            ₹{{ listing.price|floatformat:0 }}
+                            {% if listing.is_negotiable %}
+                                <small class="d-block">(Negotiable)</small>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <h6 class="text-muted mb-2">Category</h6>
+                        <p class="mb-3">
+                            <i class="fas fa-tag me-2 text-primary"></i>
+                            <a href="{% url 'listings_web:category' listing.category.slug %}" class="text-decoration-none">
+                                {{ listing.category.name }}
+                            </a>
+                        </p>
+                        
+                        {% if listing.condition %}
+                            <h6 class="text-muted mb-2">Condition</h6>
+                            <p class="mb-3">
+                                <i class="fas fa-info-circle me-2 text-info"></i>
+                                {{ listing.condition.name }}
+                            </p>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-6">
+                        <h6 class="text-muted mb-2">Location</h6>
+                        <p class="mb-3">
+                            <i class="fas fa-map-marker-alt me-2 text-danger"></i>
+                            {{ listing.get_location_string }}
+                            {% if listing.pincode %}
+                                - {{ listing.pincode }}
+                            {% endif %}
+                        </p>
+                        
+                        <h6 class="text-muted mb-2">Listed</h6>
+                        <p class="mb-3">
+                            <i class="fas fa-clock me-2 text-warning"></i>
+                            {{ listing.created_at|timesince }} ago
+                        </p>
+                    </div>
+                </div>
+
+                <h6 class="text-muted mb-3">Description</h6>
+                <div class="mb-4">
+                    {{ listing.description|linebreaks }}
+                </div>
+
+                {% if listing.tags %}
+                    <h6 class="text-muted mb-2">Tags</h6>
+                    <div class="mb-4">
+                        {% for tag in listing.tags|split:"," %}
+                            <span class="badge bg-secondary me-2 mb-2">#{{ tag|trim }}</span>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                {% if listing.attributes.all %}
+                    <h6 class="text-muted mb-3">Additional Details</h6>
+                    <div class="row mb-4">
+                        {% for attr in listing.attributes.all %}
+                            <div class="col-md-6 mb-2">
+                                <strong>{{ attr.name }}:</strong> {{ attr.value }}
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                <!-- Engagement Stats -->
+                <div class="d-flex justify-content-between align-items-center py-3 border-top">
+                    <div class="d-flex gap-4">
+                        <span class="text-muted">
+                            <i class="fas fa-eye me-1"></i>{{ listing.views }} views
+                        </span>
+                        <span class="text-muted">
+                            <i class="fas fa-heart me-1"></i>{{ listing.favorites_count }} favorites
+                        </span>
+                        <span class="text-muted">
+                            <i class="fas fa-comment me-1"></i>{{ listing.inquiries_count }} inquiries
+                        </span>
+                    </div>
+                    <div class="d-flex gap-2">
+                        {% if user.is_authenticated and user != listing.seller %}
+                            <button class="btn btn-outline-danger favorite-btn" data-listing-id="{{ listing.id }}">
+                                {% if is_favorited %}
+                                    <i class="fas fa-heart"></i> Favorited
+                                {% else %}
+                                    <i class="far fa-heart"></i> Add to Favorites
+                                {% endif %}
+                            </button>
+                        {% endif %}
+                        <button class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#shareModal">
+                            <i class="fas fa-share-alt"></i> Share
+                        </button>
+                        {% if user.is_authenticated and user != listing.seller %}
+                            <button class="btn btn-outline-warning" data-bs-toggle="modal" data-bs-target="#reportModal">
+                                <i class="fas fa-flag"></i> Report
+                            </button>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="col-lg-4">
+            <!-- Seller Info -->
+            <div class="glass-card mb-4">
+                <h6 class="text-dark fw-semibold mb-3">Seller Information</h6>
+                <div class="d-flex align-items-center mb-3">
+                    {% if listing.seller.profile_picture %}
+                        <img src="{{ listing.seller.profile_picture.url }}" alt="{{ listing.seller.username }}" 
+                             class="rounded-circle me-3" style="width: 60px; height: 60px; object-fit: cover;">
+                    {% else %}
+                        <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center me-3" 
+                             style="width: 60px; height: 60px;">
+                            <i class="fas fa-user text-white fa-lg"></i>
+                        </div>
+                    {% endif %}
+                    <div>
+                        <h6 class="mb-1 text-dark">{{ listing.seller.get_full_name|default:listing.seller.username }}</h6>
+                        <div class="d-flex align-items-center">
+                            {% if listing.seller.rating > 0 %}
+                                <div class="text-warning me-2">
+                                    {% for i in "12345" %}
+                                        {% if forloop.counter <= listing.seller.rating %}
+                                            <i class="fas fa-star"></i>
+                                        {% else %}
+                                            <i class="far fa-star"></i>
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                                <small class="text-muted">({{ listing.seller.total_ratings }} reviews)</small>
+                            {% endif %}
+                            {% if listing.seller.is_verified %}
+                                <i class="fas fa-check-circle text-success ms-2" title="Verified Seller"></i>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    <small class="text-muted d-block">Member since {{ listing.seller.date_joined|date:"M Y" }}</small>
+                    <small class="text-muted d-block">{{ listing.seller.total_listings }} total listings</small>
+                    <small class="text-muted d-block">{{ listing.seller.successful_trades }} successful trades</small>
+                </div>
+
+                {% if user.is_authenticated and user != listing.seller %}
+                    <div class="d-grid gap-2">
+                        <button class="btn btn-primary-glass" data-bs-toggle="modal" data-bs-target="#inquiryModal">
+                            <i class="fas fa-envelope me-2"></i>Contact Seller
+                        </button>
+                        <button class="btn btn-glass">
+                            <i class="fas fa-user-plus me-2"></i>View Profile
+                        </button>
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- Safety Tips -->
+            <div class="glass-card mb-4">
+                <h6 class="text-dark fw-semibold mb-3">
+                    <i class="fas fa-shield-alt text-success me-2"></i>Safety Tips
+                </h6>
+                <ul class="list-unstyled small text-muted">
+                    <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Meet in public places</li>
+                    <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Inspect item before payment</li>
+                    <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Use secure payment methods</li>
+                    <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Trust your instincts</li>
+                </ul>
+            </div>
+
+            <!-- Related Listings -->
+            {% if similar_listings %}
+                <div class="glass-card">
+                    <h6 class="text-dark fw-semibold mb-3">Similar Items</h6>
+                    {% for similar in similar_listings %}
+                        <div class="d-flex mb-3 pb-3 border-bottom">
+                            {% if similar.get_main_image %}
+                                <img src="{{ similar.get_main_image.image.url }}" alt="{{ similar.title }}" 
+                                     class="rounded me-3" style="width: 60px; height: 60px; object-fit: cover;">
+                            {% else %}
+                                <div class="bg-light rounded d-flex align-items-center justify-content-center me-3" 
+                                     style="width: 60px; height: 60px;">
+                                    <i class="fas fa-image text-muted"></i>
+                                </div>
+                            {% endif %}
+                            <div class="flex-grow-1">
+                                <h6 class="mb-1">
+                                    <a href="{% url 'listings_web:detail' similar.pk %}" class="text-decoration-none text-dark">
+                                        {{ similar.title|truncatechars:40 }}
+                                    </a>
+                                </h6>
+                                <div class="text-primary fw-semibold">₹{{ similar.price|floatformat:0 }}</div>
+                                <small class="text-muted">{{ similar.get_location_string }}</small>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Inquiry Modal -->
+{% if user.is_authenticated and user != listing.seller %}
+<div class="modal fade" id="inquiryModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content glass">
+            <div class="modal-header">
+                <h5 class="modal-title text-white">Contact Seller</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="inquiryForm">
+                <div class="modal-body">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="message" class="form-label text-white">Message *</label>
+                        <textarea class="form-control" id="message" name="message" rows="4" 
+                                  placeholder="Hi, I'm interested in your {{ listing.title }}..." required></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="phone_number" class="form-label text-white">Phone Number</label>
+                        <input type="tel" class="form-control" id="phone_number" name="phone_number" 
+                               value="{{ user.phone_number }}" placeholder="Your phone number">
+                    </div>
+                    <div class="mb-3">
+                        <label for="email" class="form-label text-white">Email</label>
+                        <input type="email" class="form-control" id="email" name="email" 
+                               value="{{ user.email }}" readonly>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-glass" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary-glass">Send Message</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- Share Modal -->
+<div class="modal fade" id="shareModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content glass">
+            <div class="modal-header">
+                <h5 class="modal-title text-white">Share this listing</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="input-group mb-3">
+                    <input type="text" class="form-control" id="shareUrl" value="{{ request.build_absolute_uri }}" readonly>
+                    <button class="btn btn-primary-glass" onclick="copyToClipboard()">
+                        <i class="fas fa-copy"></i> Copy
+                    </button>
+                </div>
+                <div class="d-flex gap-2">
+                    <a href="https://wa.me/?text={{ listing.title|urlencode }} - {{ request.build_absolute_uri|urlencode }}" 
+                       class="btn btn-success" target="_blank">
+                        <i class="fab fa-whatsapp"></i> WhatsApp
+                    </a>
+                    <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.build_absolute_uri|urlencode }}" 
+                       class="btn btn-primary" target="_blank">
+                        <i class="fab fa-facebook"></i> Facebook
+                    </a>
+                    <a href="https://twitter.com/intent/tweet?text={{ listing.title|urlencode }}&url={{ request.build_absolute_uri|urlencode }}" 
+                       class="btn btn-info" target="_blank">
+                        <i class="fab fa-twitter"></i> Twitter
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Report Modal -->
+{% if user.is_authenticated and user != listing.seller %}
+<div class="modal fade" id="reportModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content glass">
+            <div class="modal-header">
+                <h5 class="modal-title text-white">Report this listing</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="reportForm">
+                <div class="modal-body">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="reason" class="form-label text-white">Reason *</label>
+                        <select class="form-select" id="reason" name="reason" required>
+                            <option value="">Select reason</option>
+                            <option value="spam">Spam</option>
+                            <option value="inappropriate">Inappropriate Content</option>
+                            <option value="fake">Fake Listing</option>
+                            <option value="duplicate">Duplicate Listing</option>
+                            <option value="wrong_category">Wrong Category</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="description" class="form-label text-white">Additional Details</label>
+                        <textarea class="form-control" id="description" name="description" rows="3" 
+                                  placeholder="Please provide more details about the issue..."></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-glass" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-danger">Submit Report</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Handle inquiry form submission
+    $('#inquiryForm').submit(function(e) {
+        e.preventDefault();
+        
+        $.post('{% url "listings:inquiry_create" listing.pk %}', $(this).serialize())
+            .done(function(data) {
+                $('#inquiryModal').modal('hide');
+                alert('Your message has been sent successfully!');
+            })
+            .fail(function(xhr) {
+                var error = xhr.responseJSON ? xhr.responseJSON.error : 'An error occurred';
+                alert('Error: ' + error);
+            });
+    });
+
+    // Handle report form submission
+    $('#reportForm').submit(function(e) {
+        e.preventDefault();
+        
+        $.post('{% url "listings:report" listing.pk %}', $(this).serialize())
+            .done(function(data) {
+                $('#reportModal').modal('hide');
+                alert('Report submitted successfully!');
+            })
+            .fail(function(xhr) {
+                var error = xhr.responseJSON ? xhr.responseJSON.error : 'An error occurred';
+                alert('Error: ' + error);
+            });
+    });
+
+    // Copy to clipboard function
+    function copyToClipboard() {
+        var copyText = document.getElementById("shareUrl");
+        copyText.select();
+        copyText.setSelectionRange(0, 99999);
+        navigator.clipboard.writeText(copyText.value);
+        alert("Link copied to clipboard!");
+    }
+</script>
+{% endblock %}

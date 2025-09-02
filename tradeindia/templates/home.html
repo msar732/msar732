@@ -1,0 +1,250 @@
+{% extends 'base.html' %}
+
+{% block title %}Trade India - Buy, Sell, Exchange Anything in India{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- Hero Section -->
+    <section class="hero-section py-5">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-8 mx-auto text-center">
+                    <h1 class="display-4 text-white fw-bold mb-4 fade-in-up">
+                        India's Premier Trading Platform
+                    </h1>
+                    <p class="lead text-light mb-5 fade-in-up">
+                        Buy, sell, and exchange anything across all states and districts of India. 
+                        Join millions of trusted users in India's largest marketplace.
+                    </p>
+                    
+                    <!-- Search Bar -->
+                    <div class="search-container fade-in-up">
+                        <form method="GET" action="{% url 'search_web:search' %}">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <input type="text" name="q" class="search-input" placeholder="What are you looking for?" id="search-input">
+                                </div>
+                                <div class="col-md-3">
+                                    <select name="state" class="form-select" id="state-select">
+                                        <option value="">All States</option>
+                                        {% for state in states %}
+                                            <option value="{{ state.id }}">{{ state.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="col-md-3">
+                                    <button type="submit" class="btn btn-primary-glass w-100">
+                                        <i class="fas fa-search me-2"></i>Search
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Categories Section -->
+    <section class="categories-section py-5">
+        <div class="container">
+            <h2 class="text-center text-white mb-5 fw-bold">Popular Categories</h2>
+            <div class="row">
+                {% for category in categories %}
+                <div class="col-lg-2 col-md-3 col-sm-4 col-6 mb-4">
+                    <a href="{% url 'listings_web:category' category.slug %}" class="text-decoration-none">
+                        <div class="glass-card text-center h-100">
+                            <div class="category-icon">
+                                <i class="fas fa-{{ category.icon|default:'tag' }}"></i>
+                            </div>
+                            <h6 class="text-dark fw-semibold">{{ category.name }}</h6>
+                            <small class="text-muted">{{ category.listings.count }} items</small>
+                        </div>
+                    </a>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Listings -->
+    <section class="featured-section py-5">
+        <div class="container">
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <h2 class="text-white fw-bold">Featured Items</h2>
+                </div>
+                <div class="col-md-6 text-end">
+                    <a href="{% url 'listings_web:featured' %}" class="btn btn-glass">
+                        View All Featured <i class="fas fa-arrow-right ms-2"></i>
+                    </a>
+                </div>
+            </div>
+            
+            <div class="row">
+                {% for listing in featured_listings %}
+                <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+                    <div class="listing-card">
+                        {% if listing.get_main_image %}
+                            <img src="{{ listing.get_main_image.image.url }}" alt="{{ listing.title }}">
+                        {% else %}
+                            <div class="placeholder-img d-flex align-items-center justify-content-center" style="height: 200px; background: #f8f9fa;">
+                                <i class="fas fa-image text-muted fa-3x"></i>
+                            </div>
+                        {% endif %}
+                        
+                        <div class="p-3">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <span class="status-badge status-featured">Featured</span>
+                                <button class="btn btn-sm btn-outline-danger favorite-btn" data-listing-id="{{ listing.id }}">
+                                    <i class="far fa-heart"></i>
+                                </button>
+                            </div>
+                            
+                            <h6 class="card-title fw-semibold mb-2">
+                                <a href="{% url 'listings_web:detail' listing.pk %}" class="text-decoration-none text-dark">
+                                    {{ listing.title|truncatechars:50 }}
+                                </a>
+                            </h6>
+                            
+                            <div class="price-tag mb-2">
+                                ₹{{ listing.price|floatformat:0 }}
+                                {% if listing.is_negotiable %}
+                                    <small>(Negotiable)</small>
+                                {% endif %}
+                            </div>
+                            
+                            <p class="text-muted small mb-2">
+                                <i class="fas fa-map-marker-alt me-1"></i>
+                                {{ listing.get_location_string }}
+                            </p>
+                            
+                            <div class="d-flex justify-content-between align-items-center">
+                                <small class="text-muted">
+                                    <i class="fas fa-eye me-1"></i>{{ listing.views }}
+                                    <i class="fas fa-heart ms-2 me-1"></i>{{ listing.favorites_count }}
+                                </small>
+                                <small class="text-muted">{{ listing.created_at|timesince }} ago</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+    <!-- Recent Listings -->
+    <section class="recent-section py-5">
+        <div class="container">
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <h2 class="text-white fw-bold">Latest Items</h2>
+                </div>
+                <div class="col-md-6 text-end">
+                    <a href="{% url 'listings_web:list' %}" class="btn btn-glass">
+                        View All Items <i class="fas fa-arrow-right ms-2"></i>
+                    </a>
+                </div>
+            </div>
+            
+            <div class="row">
+                {% for listing in recent_listings %}
+                <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+                    <div class="listing-card">
+                        {% if listing.get_main_image %}
+                            <img src="{{ listing.get_main_image.image.url }}" alt="{{ listing.title }}">
+                        {% else %}
+                            <div class="placeholder-img d-flex align-items-center justify-content-center" style="height: 200px; background: #f8f9fa;">
+                                <i class="fas fa-image text-muted fa-3x"></i>
+                            </div>
+                        {% endif %}
+                        
+                        <div class="p-3">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <span class="status-badge status-active">{{ listing.get_listing_type_display }}</span>
+                                <button class="btn btn-sm btn-outline-danger favorite-btn" data-listing-id="{{ listing.id }}">
+                                    <i class="far fa-heart"></i>
+                                </button>
+                            </div>
+                            
+                            <h6 class="card-title fw-semibold mb-2">
+                                <a href="{% url 'listings_web:detail' listing.pk %}" class="text-decoration-none text-dark">
+                                    {{ listing.title|truncatechars:50 }}
+                                </a>
+                            </h6>
+                            
+                            <div class="price-tag mb-2">
+                                ₹{{ listing.price|floatformat:0 }}
+                                {% if listing.is_negotiable %}
+                                    <small>(Negotiable)</small>
+                                {% endif %}
+                            </div>
+                            
+                            <p class="text-muted small mb-2">
+                                <i class="fas fa-map-marker-alt me-1"></i>
+                                {{ listing.get_location_string }}
+                            </p>
+                            
+                            <div class="d-flex justify-content-between align-items-center">
+                                <small class="text-muted">
+                                    <i class="fas fa-eye me-1"></i>{{ listing.views }}
+                                    <i class="fas fa-heart ms-2 me-1"></i>{{ listing.favorites_count }}
+                                </small>
+                                <small class="text-muted">{{ listing.created_at|timesince }} ago</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+    <!-- Statistics Section -->
+    <section class="stats-section py-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-3 col-sm-6 mb-4">
+                    <div class="glass-card text-center">
+                        <div class="category-icon mb-3">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <h3 class="text-white fw-bold">{{ total_users|default:"1M+" }}</h3>
+                        <p class="text-light">Registered Users</p>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6 mb-4">
+                    <div class="glass-card text-center">
+                        <div class="category-icon mb-3">
+                            <i class="fas fa-box"></i>
+                        </div>
+                        <h3 class="text-white fw-bold">{{ total_listings|default:"500K+" }}</h3>
+                        <p class="text-light">Active Listings</p>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6 mb-4">
+                    <div class="glass-card text-center">
+                        <div class="category-icon mb-3">
+                            <i class="fas fa-handshake"></i>
+                        </div>
+                        <h3 class="text-white fw-bold">{{ total_trades|default:"100K+" }}</h3>
+                        <p class="text-light">Successful Trades</p>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-6 mb-4">
+                    <div class="glass-card text-center">
+                        <div class="category-icon mb-3">
+                            <i class="fas fa-map-marked-alt"></i>
+                        </div>
+                        <h3 class="text-white fw-bold">{{ total_locations|default:"700+" }}</h3>
+                        <p class="text-light">Cities Covered</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+{% csrf_token %}
+{% endblock %}
