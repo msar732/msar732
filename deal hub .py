@@ -747,6 +747,7 @@ def advanced_search(request):
 from celery import shared_task
 from .models import AIVerificationResult
 from listings.models import Listing
+from motors.models import MotorListing
 import numpy as np
 from sklearn.feature_extraction.text import TfidfVectorizer
 import tensorflow as tf
@@ -801,6 +802,35 @@ def verify_listing_genuineness(listing_id):
         
     except Exception as e:
         logger.error(f"Error verifying listing {listing_id}: {str(e)}")
+        return 0.0
+
+@shared_task
+def verify_motor_listing(listing_id):
+    """
+    AI task to verify a MotorListing's genuineness and compute its ai_score.
+    Mirrors verify_listing_genuineness, tailored for motors.
+    """
+    try:
+        listing = MotorListing.objects.get(pk=listing_id)
+        # Reuse generic analyzers when possible
+        text_score = analyze_text_genuineness(listing.title, listing.description)
+        # For motors, weight presence of images slightly higher
+        images_qs = listing.images.all() if hasattr(listing, 'images') else []
+        image_count = images_qs.count() if hasattr(images_qs, 'count') else 0
+        image_score = 0.2 if image_count == 0 else min(1.0, 0.3 + image_count * 0.15)
+
+        # Basic location heuristic
+        location_score = 0.8 if listing.address else 0.5
+
+        overall = (text_score * 0.4 + image_score * 0.4 + location_score * 0.2)
+
+        listing.ai_score = overall
+        listing.is_verified = overall > 0.7
+        listing.save(update_fields=['ai_score', 'is_verified'])
+
+        return overall
+    except Exception as e:
+        logger.error(f"Error verifying motor listing {listing_id}: {str(e)}")
         return 0.0
 
 def analyze_text_genuineness(title, description):
@@ -5358,6 +5388,35 @@ class HomeView(TemplateView):
         
         return context
 
+# ai_verification/utils.py
+from django.core.cache import cache
+from listings.models import Listing
+
+def get_ai_recommendations(user, limit=10):
+    """Return recommended listings for a user using the RecommendationEngine with caching fallback."""
+    try:
+        from ai_verification.ml_models import RecommendationEngine
+        cache_key = f"ai_recs_user_{getattr(user, 'id', 'anon')}_{limit}"
+        cached = cache.get(cache_key)
+        if cached is not None:
+            return cached
+        if getattr(user, 'is_authenticated', False):
+            engine = RecommendationEngine()
+            recs = engine.get_user_recommendations(user, limit=limit)
+        else:
+            recs = list(
+                Listing.objects.filter(status='active')
+                .order_by('-ai_genuineness_score', '-created_at')[:limit]
+            )
+        cache.set(cache_key, recs, 1800)
+        return recs
+    except Exception:
+        # Safe fallback: recent verified listings
+        return list(
+            Listing.objects.filter(status='active')
+            .order_by('-ai_genuineness_score', '-created_at')[:limit]
+        )
+
 # Motors app - motors/models.py
 from django.db import models
 from django.contrib.gis.db import models as gis_models
@@ -5755,7 +5814,7 @@ def get_ai_price_analysis(listing):
 
 # Motors forms - motors/forms.py
 from django import forms
-from .models import MotorListing, MotorInquiry, MotorMake, MotorModel
+from .models import MotorListing, MotorInquiry, MotorMake, MotorModel, MotorImage
 
 class MotorListingForm(forms.ModelForm):
     class Meta:
@@ -5791,6 +5850,11 @@ class MotorInquiryForm(forms.ModelForm):
         widgets = {
             'message': forms.Textarea(attrs={'rows': 4, 'placeholder': 'Hi, I\'m interested in your vehicle. Is it still available?'})
         }
+
+class MotorImageForm(forms.ModelForm):
+    class Meta:
+        model = MotorImage
+        fields = ['image', 'caption', 'order', 'is_primary']
 
 # Motors URLs - motors/urls.py
 from django.urls import path
