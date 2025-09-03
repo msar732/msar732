@@ -1018,6 +1018,7 @@ urlpatterns = [
 ]
 
 # templates/base.html
+BASE_HTML = """
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -1326,8 +1327,10 @@ urlpatterns = [
     {% block extra_js %}{% endblock %}
 </body>
 </html>
+"""
 
 # templates/index.html
+INDEX_HTML = """
 {% extends 'base.html' %}
 
 {% block content %}
@@ -1465,6 +1468,8 @@ urlpatterns = [
                     </div>
 
 
+
+"""
 
 class TradeIndiaAdminSite(AdminSite):
     """Custom admin site for Trade India"""
@@ -2196,7 +2201,9 @@ print("- RESTful API with versioning")
 print("- Docker containerization ready")
 print("=" * 70)
 print("🚀 Production-ready with 10,000+ lines of code!")
-print("Run: python manage.py generate_sample_data --motors 1000")    function animateCounters() {
+print("Run: python manage.py generate_sample_data --motors 1000")
+ADVANCED_SEARCH_JS = """
+    function animateCounters() {
         const counters = ['live-auctions', 'active-bidders', 'ending-soon'];
         
         counters.forEach(id => {
@@ -2233,10 +2240,10 @@ print("Run: python manage.py generate_sample_data --motors 1000")    function an
             }
         });
     }, 5000);
-</script>
-{% endblock %}
+"""
 
 # Advanced Search & Filters - templates/search/advanced.html
+ADVANCED_HTML = """
 {% extends 'base.html' %}
 
 {% block title %}Advanced Search - Find Exactly What You Need | Trade India{% endblock %}
@@ -2573,6 +2580,7 @@ print("Run: python manage.py generate_sample_data --motors 1000")    function an
     });
 </script>
 {% endblock %}
+"""
 
 # Community & Forums - community/models.py
 from django.db import models
@@ -2867,92 +2875,65 @@ class TradeIndiaAdminSite(AdminSite):
     """Custom admin site for Trade India"""
     site_header = 'Trade India Administration'
     site_title = 'Trade India Admin'
-    index_title = '    <!-- CTA Section -->
-    <section class="py-16 px-4">
-        <div class="max-w-4xl mx-auto text-center">
-            <div class="glass rounded-lg p-12">
-                <h2 class="text-4xl font-bold text-white mb-6">
-                    Start Your Property Journey Today
-                </h2>
-                <p class="text-xl text-gray-200 mb-8">
-                    Whether buying, selling, or renting - we have the perfect property solution for you
-                </p>
-                <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                    <a href="/property/create/" class="bg-gradient-to-r from-green-500 to-blue-600 text-white px-8 py-4 rounded-lg font-semibold hover:from-green-600 hover:to-blue-700 transition-all inline-flex items-center justify-center">
-                        <i class="fas fa-plus mr-2"></i>List Your Property
-                    </a>
-                    <a href="/property/browse/" class="bg-gradient-to-r from-blue-500 to-purple-600 text-white px-8 py-4 rounded-lg font-semibold hover:from-blue-600 hover:to-purple-700 transition-all inline-flex items-center justify-center">
-                        <i class="fas fa-search mr-2"></i>Browse Properties
-                    </a>
-                </div>
-            </div>
-        </div>
-    </section>
-</div>
-
-{% endblock %}
-
-{% block extra_js %}
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Property tab switching
-        const tabs = document.querySelectorAll('.property-tab');
-        const form = document.getElementById('property-search-form');
-        
-        tabs.forEach(tab => {
-            tab.addEventListener('click', function() {
-                tabs.forEach(t => {
-                    t.classList.remove('active', 'bg-blue-500');
-                    t.classList.add('glass-dark');
-                });
-                
-                this.classList.add('active', 'bg-blue-500');
-                this.classList.remove('glass-dark');
-                
-                // Update form action based on tab
-                const tabType = this.dataset.tab;
-                form.action = `/property/${tabType}/`;
+    index_title = 'Trade India Management Dashboard'
+PROPERTY_HOME_JS = """
+document.addEventListener('DOMContentLoaded', function() {
+    const tabs = document.querySelectorAll('.property-tab');
+    const form = document.getElementById('property-search-form');
+    
+    tabs.forEach(tab => {
+        tab.addEventListener('click', function() {
+            tabs.forEach(t => {
+                t.classList.remove('active', 'bg-blue-500');
+                t.classList.add('glass-dark');
             });
-        });
-        
-        // Price filter buttons
-        const priceFilters = document.querySelectorAll('.price-filter');
-        priceFilters.forEach(filter => {
-            filter.addEventListener('click', function() {
-                const range = this.dataset.range.split('-');
-                const minPrice = range[0];
-                const maxPrice = range[1];
-                
-                // Add hidden inputs for price range
-                const existingMin = form.querySelector('input[name="min_price"]');
-                const existingMax = form.querySelector('input[name="max_price"]');
-                
-                if (existingMin) existingMin.value = minPrice;
-                else {
-                    const minInput = document.createElement('input');
-                    minInput.type = 'hidden';
-                    minInput.name = 'min_price';
-                    minInput.value = minPrice;
-                    form.appendChild(minInput);
-                }
-                
-                if (existingMax) existingMax.value = maxPrice;
-                else {
-                    const maxInput = document.createElement('input');
-                    maxInput.type = 'hidden';
-                    maxInput.name = 'max_price';
-                    maxInput.value = maxPrice;
-                    form.appendChild(maxInput);
-                }
-                
-                // Highlight selected filter
-                priceFilters.forEach(f => f.classList.remove('bg-blue-500', 'text-black'));
-                this.classList.add('bg-blue-500', 'text-black');
-            });
+            
+            this.classList.add('active', 'bg-blue-500');
+            this.classList.remove('glass-dark');
+            
+            // Update form action based on tab
+            const tabType = this.dataset.tab;
+            form.action = `/property/${tabType}/`;
         });
     });
-</script>
-{% endblock %}
+    
+    // Price filter buttons
+    const priceFilters = document.querySelectorAll('.price-filter');
+    priceFilters.forEach(filter => {
+        filter.addEventListener('click', function() {
+            const range = this.dataset.range.split('-');
+            const minPrice = range[0];
+            const maxPrice = range[1];
+            
+            // Add hidden inputs for price range
+            const existingMin = form.querySelector('input[name="min_price"]');
+            const existingMax = form.querySelector('input[name="max_price"]');
+            
+            if (existingMin) existingMin.value = minPrice;
+            else {
+                const minInput = document.createElement('input');
+                minInput.type = 'hidden';
+                minInput.name = 'min_price';
+                minInput.value = minPrice;
+                form.appendChild(minInput);
+            }
+            
+            if (existingMax) existingMax.value = maxPrice;
+            else {
+                const maxInput = document.createElement('input');
+                maxInput.type = 'hidden';
+                maxInput.name = 'max_price';
+                maxInput.value = maxPrice;
+                form.appendChild(maxInput);
+            }
+            
+            // Highlight selected filter
+            priceFilters.forEach(f => f.classList.remove('bg-blue-500', 'text-black'));
+            this.classList.add('bg-blue-500', 'text-black');
+        });
+    });
+});
+"""
 
 # Jobs Homepage - templates/jobs/home.html
 {% extends 'base.html' %}
@@ -2960,6 +2941,7 @@ class TradeIndiaAdminSite(AdminSite):
 {% block title %}Jobs - Find Your Dream Career | Trade India{% endblock %}
 
 {% block content %}
+PROPERTY_HOME_HTML = ""
 <div class="min-h-screen">
     <!-- Jobs Hero Section -->
     <section class="relative py-16 px-4">
@@ -3130,6 +3112,7 @@ class TradeIndiaAdminSite(AdminSite):
 {% endblock %}
 
 # Auctions Homepage - templates/auctions/home.html
+AUCTIONS_HTML = """
 {% extends 'base.html' %}
 
 {% block title %}Auctions - Live Bidding & Deals | Trade India{% endblock %}
@@ -3233,7 +3216,7 @@ class TradeIndiaAdminSite(AdminSite):
                         <div class="absolute top-2 right-2">
                             <span class="bg-black bg-opacity-80 text-white px-2 py-1 rounded text-xs">
                                 <i class="fas fa-clock mr-1"></i>
-                                <span class="countdown" data-end="2025-09-04T18:30:00">2h 15m</span>
+                                {{ "<span class='countdown' data-end='2025-09-04T18:30:00'>2h 15m</span>" }}
                             </span>
                         </div>
                         
@@ -3394,7 +3377,13 @@ class TradeIndiaAdminSite(AdminSite):
         animateCounters();
     });
     
-    function animateCounters()# AI-powered recommendation system - ai_verification/ml_models.py
+    function animateCounters() {
+        // placeholder
+    }
+{% endblock %}
+"""
+
+# AI-powered recommendation system - ai_verification/ml_models.py
 import numpy as np
 import pandas as pd
 from sklearn.ensemble import RandomForestRegressor
@@ -3692,6 +3681,7 @@ class JobAlert(models.Model):
         return f"{self.user.username} - {self.alert_name}"
 
 # Enhanced templates - templates/property/home.html
+PROPERTY_HOME_HTML += """
 {% extends 'base.html' %}
 
 {% block title %}Property - Buy, Sell, Rent Properties in India | Trade India{% endblock %}
@@ -3961,7 +3951,7 @@ class JobAlert(models.Model):
             </div>
         </div>
     </section>
-
+    
     <!-- Property Services -->
     <section class="py-16 px-4">
         <div class="max-w-7xl mx-auto">
@@ -4009,48 +3999,10 @@ class JobAlert(models.Model):
             </div>
         </div>
     </section>
+"""
 
-    <!-- CTA Section --># AI-powered recommendation system - ai_verification/ml_models.py
-import numpy as np
-import pandas as pd
-from sklearn.ensemble import RandomForestRegressor
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.metrics.                        <div id="search-suggestions" class="absolute top-full left-0 w-full mt-1 glass-dark rounded-lg hidden max-h-96 overflow-y-auto"></div>
-                    </div>
-                </div>
-                
-                <!-- User Actions -->
-                <div class="flex items-center space-x-4">
-                    {% if user.is_authenticated %}
-                        <a href="{% url 'listings:create' %}" class="glass-dark px-4 py-2 rounded-full text-white hover:bg-white hover:bg-opacity-20 transition-all icon-bounce">
-                            <i class="fas fa-plus mr-2"></i>Sell
-                        </a>
-                        <div class="relative nav-item">
-                            <button class="flex items-center space-x-2 glass-dark px-3 py-2 rounded-full">
-                                {% if user.profile_image %}
-                                    <img src="{{ user.profile_image.url }}" alt="Profile" class="w-8 h-8 rounded-full">
-                                {% else %}
-                                    <div class="w-8 h-8 bg-gradient-to-r from-blue-400 to-purple-500 rounded-full flex items-center justify-center text-white font-bold">
-                                        {{ user.username|first|upper }}
-                                    </div>
-                                {% endif %}
-                                <span class="text-white">{{ user.username }}</span>
-                                <i class="fas fa-chevron-down text-white text-sm"></i>
-                            </button>
-                        </div>
-                    {% else %}
-                        <a href="{% url 'accounts:login' %}" class="glass-dark px-4 py-2 rounded-full text-white hover:bg-white hover:bg-opacity-20 transition-all">
-                            Login
-                        </a>
-                        <a href="{% url 'accounts:register' %}" class="bg-white bg-opacity-20 px-4 py-2 rounded-full text-white hover:bg-opacity-30 transition-all">
-                            Register
-                        </a>
-                    {% endif %}
-                </div>
-            </div>
-            
-            <!-- Main Navigation Menu -->
-            <div class="border-t border-white border-opacity-20">
+    <!-- CTA Section -->
+"""
                 <div class="flex items-center justify-center space-x-8 p-4">
                     
                     <!-- Motors Mega Menu -->
@@ -5045,6 +4997,7 @@ class Bid(models.Model):
         unique_together = ['auction', 'bidder', 'amount']
 
 # Enhanced templates - templates/base.html with navigation
+BASE_HTML_ENHANCED = r"""
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5165,7 +5118,19 @@ class Bid(models.Model):
                                 <i class="fas fa-search"></i>
                             </button>
                         </div>
-                        <div id="search-suggestions" class="absolute top-full left-0 w-full mt-# Extended Trade India - Complete Application with Subpages and App Router
+                        <div id="search-suggestions" class="absolute top-full left-0 w-full mt-1 glass-dark rounded-lg hidden max-h-96 overflow-y-auto"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+    {% block content %}{% endblock %}
+    {% block extra_js %}{% endblock %}
+</body>
+</html>
+"""
+
+# Extended Trade India - Complete Application with Subpages and App Router
 # Comprehensive marketplace with 20+ subpages and AI-powered features
 
 # Enhanced settings.py with additional apps and configurations
