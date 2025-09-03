@@ -430,6 +430,29 @@ class AIVerificationResult(models.Model):
     def __str__(self):
         return f"AI Verification for {self.listing.title}"
 
+class FakeReport(models.Model):
+    """User-submitted reports flagging potentially fake listings"""
+    listing = models.ForeignKey(Listing, on_delete=models.CASCADE, related_name='fake_reports')
+    reporter = models.ForeignKey(User, on_delete=models.CASCADE)
+    reason = models.CharField(max_length=255, blank=True)
+    description = models.TextField(blank=True)
+    status = models.CharField(
+        max_length=20,
+        choices=[('pending', 'Pending'), ('under_review', 'Under Review'), ('resolved', 'Resolved')],
+        default='pending'
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    metadata = models.JSONField(default=dict, blank=True)
+    
+    class Meta:
+        indexes = [models.Index(fields=['listing', 'status', 'created_at'])]
+        ordering = ['-created_at']
+        unique_together = ['listing', 'reporter', 'reason', 'created_at']
+    
+    def __str__(self):
+        return f"Report on {self.listing_id} by {self.reporter_id}"
+
 # accounts/views.py
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate
@@ -1918,8 +1941,21 @@ class ListingViewSetV2(viewsets.ModelViewSet):
             'timestamp': timezone.now()
         }
         
-        # In real implementation, store in database and trigger review
-        # For now, just log it
+        # Persist report
+        try:
+            from ai_verification.models import FakeReport
+            FakeReport.objects.create(
+                listing=listing,
+                reporter=request.user,
+                reason=report_data['reason'],
+                description=report_data['description'],
+                metadata={'source': 'api_v2', 'reported_at': str(report_data['timestamp'])}
+            )
+        except Exception as e:
+            # Still log for observability but do not fail the endpoint
+            print(f"Failed to persist FakeReport for listing {listing.id}: {e}")
+        
+        # Log report
         print(f"Fake report for listing {listing.id}: {report_data}")
         
         return Response({'message': 'Report submitted successfully'})
