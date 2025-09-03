@@ -1018,7 +1018,7 @@ urlpatterns = [
 ]
 
 # templates/base.html
-<!DOCTYPE html>
+BASE_HTML_TEMPLATE = """<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -1030,23 +1030,23 @@ urlpatterns = [
         /* Glassmorphism styles */
         .glass {
             background: rgba(255, 255, 255, 0.25);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.18);
+            backdrop-filter: blur(10 px);
+            border: 1 px solid rgba(255, 255, 255, 0.18);
         }
         
         .glass-dark {
             background: rgba(0, 0, 0, 0.25);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10 px);
+            border: 1 px solid rgba(255, 255, 255, 0.1);
         }
         
         /* Custom gradients */
         .gradient-bg {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: blue;
         }
         
         .gradient-text {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: blue;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -1054,16 +1054,16 @@ urlpatterns = [
         
         /* Animation classes */
         .animate-float {
-            animation: float 6s ease-in-out infinite;
+            animation: float 6 s ease-in-out infinite;
         }
         
         @keyframes float {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
+            0 %, 100 % { transform: translateY(0 px); }
+            50 % { transform: translateY(-10 px); }
         }
         
         .hover-scale {
-            transition: transform 0.3s ease;
+            transition: transform 0.3 s ease;
         }
         
         .hover-scale:hover {
@@ -1072,18 +1072,18 @@ urlpatterns = [
         
         /* Search suggestions */
         .suggestions-dropdown {
-            max-height: 300px;
+            max-height: 300 px;
             overflow-y: auto;
         }
         
         /* Card hover effects */
         .listing-card {
-            transition: all 0.3s ease;
+            transition: all 0.3 s ease;
         }
         
         .listing-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            transform: translateY(-5 px);
+            box-shadow: 0 20 px 40 px rgba(0,0,0,0.1);
         }
     </style>
     {% block extra_css %}{% endblock %}
@@ -1325,10 +1325,10 @@ urlpatterns = [
     </script>
     {% block extra_js %}{% endblock %}
 </body>
-</html>
+</html>"""
 
 # templates/index.html
-{% extends 'base.html' %}
+INDEX_HTML_TEMPLATE = r"""{% extends 'base.html' %}
 
 {% block content %}
 <div class="relative overflow-hidden">
@@ -1371,7 +1371,7 @@ urlpatterns = [
                     <div class="text-gray-200">Happy Users</div>
                 </div>
                 <div class="glass rounded-lg p-6 hover-scale">
-                    <div class="text-3xl font-bold text-white mb-2">99%</div>
+                    <div class="text-3xl font-bold text-white mb-2">99 %</div>
                     <div class="text-gray-200">AI Verified</div>
                 </div>
             </div>
@@ -1441,7 +1441,7 @@ urlpatterns = [
                         <h3 class="text-white font-semibold mb-2 truncate">iPhone 15 Pro - Excellent Condition</h3>
                         <p class="text-gray-300 text-sm mb-3">Mumbai, Maharashtra</p>
                         <div class="flex justify-between items-center">
-                            <span class="text-2xl font-bold text-white">₹95,000</span>
+                            <span class="text-2xl font-bold text-white">Rs.95,000</span>
                             <div class="flex items-center text-yellow-400">
                                 <i class="fas fa-star text-xs"></i>
                                 <span class="text-xs ml-1">4.8</span>
@@ -1463,8 +1463,11 @@ urlpatterns = [
                             <i class="far fa-heart text-xl"></i>
                         </button>
                     </div>
-
-
+                </div>
+            </div>
+        </section>
+    </div>
+{% endblock %}"""  # End of INDEX_HTML_TEMPLATE
 
 class TradeIndiaAdminSite(AdminSite):
     """Custom admin site for Trade India"""
@@ -2223,9 +2226,9 @@ print("Run: python manage.py generate_sample_data --motors 1000")    function an
         auctionCards.forEach(card => {
             const bidAmount = card.querySelector('.text-green-400');
             if (bidAmount && Math.random() > 0.95) {
-                const current = parseInt(bidAmount.textContent.replace(/[₹,]/g, ''));
+                const current = parseInt(bidAmount.textContent.replace(/[Rs.,]/g, ''));
                 const newBid = current + Math.floor(Math.random() * 10000) + 1000;
-                bidAmount.textContent = `₹${newBid.toLocaleString()}`;
+                bidAmount.textContent = `Rs.${newBid.toLocaleString()}`;
                 
                 // Flash animation
                 bidAmount.classList.add('animate-pulse');
@@ -2234,10 +2237,10 @@ print("Run: python manage.py generate_sample_data --motors 1000")    function an
         });
     }, 5000);
 </script>
-{% endblock %}
+{% endblock %}"""
 
 # Advanced Search & Filters - templates/search/advanced.html
-{% extends 'base.html' %}
+ADVANCED_SEARCH_TEMPLATE = r"""{% extends 'base.html' %}
 
 {% block title %}Advanced Search - Find Exactly What You Need | Trade India{% endblock %}
 
@@ -2250,7 +2253,7 @@ print("Run: python manage.py generate_sample_data --motors 1000")    function an
                 Advanced Search
             </h1>
             <p class="text-xl text-gray-200">
-                Use our powerful filters to find exactly what you're looking for
+                Use our powerful filters to find exactly what you are looking for
             </p>
         </div>
         
@@ -2292,9 +2295,9 @@ print("Run: python manage.py generate_sample_data --motors 1000")    function an
                         <div>
                             <label class="block text-white font-semibold mb-3">Price Range</label>
                             <div class="grid grid-cols-2 gap-3">
-                                <input type="number" name="min_price" placeholder="Min ₹" 
+                                <input type="number" name="min_price" placeholder="Min Rs." 
                                        class="px-3 py-2 rounded-lg bg-white bg-opacity-20 text-white placeholder-gray-300 border border-white border-opacity-30">
-                                <input type="number" name="max_price" placeholder="Max ₹" 
+                                <input type="number" name="max_price" placeholder="Max Rs." 
                                        class="px-3 py-2 rounded-lg bg-white bg-opacity-20 text-white placeholder-gray-300 border border-white border-opacity-30">
                             </div>
                         </div>
@@ -2435,7 +2438,7 @@ print("Run: python manage.py generate_sample_data --motors 1000")    function an
                         </button>
                     </span>
                     <span class="px-3 py-1 bg-green-500 text-white rounded-full text-sm flex items-center">
-                        ₹5,000 - ₹50,000
+                        Rs.5,000 - Rs.50,000
                         <button class="ml-2 text-white hover:text-gray-300">
                             <i class="fas fa-times"></i>
                         </button>
@@ -2471,7 +2474,7 @@ print("Run: python manage.py generate_sample_data --motors 1000")    function an
                         </div>
                         
                         <div class="p-4">
-                            <h3 class="text-white font-semibold mb-2 truncate">iPhone 14 Pro - 256GB Space Black</h3>
+                            <h3 class="text-white font-semibold mb-2 truncate">iPhone 14 Pro - 256 GB Space Black</h3>
                             <div class="flex items-center text-gray-300 text-sm mb-2">
                                 <i class="fas fa-map-marker-alt mr-1"></i>
                                 <span>Mumbai, Maharashtra</span>
@@ -2479,7 +2482,7 @@ print("Run: python manage.py generate_sample_data --motors 1000")    function an
                             <div class="text-xs text-gray-400 mb-3">Posted 2 days ago</div>
                             
                             <div class="flex items-center justify-between">
-                                <span class="text-2xl font-bold text-green-400">₹95,000</span>
+                                <span class="text-2xl font-bold text-green-400">Rs.95,000</span>
                                 <div class="flex items-center text-yellow-400">
                                     <i class="fas fa-star text-xs"></i>
                                     <span class="text-xs ml-1">4.9</span>
@@ -2507,7 +2510,7 @@ print("Run: python manage.py generate_sample_data --motors 1000")    function an
                         </div>
                         
                         <div class="p-4">
-                            <h3 class="text-white font-semibold mb-2 truncate">Samsung Galaxy S23 Ultra - 512GB</h3>
+                            <h3 class="text-white font-semibold mb-2 truncate">Samsung Galaxy S23 Ultra - 512 GB</h3>
                             <div class="flex items-center text-gray-300 text-sm mb-2">
                                 <i class="fas fa-map-marker-alt mr-1"></i>
                                 <span>Bangalore, Karnataka</span>
@@ -2515,7 +2518,7 @@ print("Run: python manage.py generate_sample_data --motors 1000")    function an
                             <div class="text-xs text-gray-400 mb-3">Posted 5 days ago</div>
                             
                             <div class="flex items-center justify-between">
-                                <span class="text-2xl font-bold text-green-400">₹85,000</span>
+                                <span class="text-2xl font-bold text-green-400">Rs.85,000</span>
                                 <div class="flex items-center text-yellow-400">
                                     <i class="fas fa-star text-xs"></i>
                                     <span class="text-xs ml-1">4.8</span>
@@ -2572,7 +2575,7 @@ print("Run: python manage.py generate_sample_data --motors 1000")    function an
         setTimeout(performSearch, 500); // Debounce
     });
 </script>
-{% endblock %}
+{% endblock %}"""
 
 # Community & Forums - community/models.py
 from django.db import models
@@ -2867,7 +2870,10 @@ class TradeIndiaAdminSite(AdminSite):
     """Custom admin site for Trade India"""
     site_header = 'Trade India Administration'
     site_title = 'Trade India Admin'
-    index_title = '    <!-- CTA Section -->
+    index_title = 'Trade India Management Dashboard'
+    
+    # HTML template content moved to separate variable
+    CTA_SECTION_HTML = '''    <!-- CTA Section -->
     <section class="py-16 px-4">
         <div class="max-w-4xl mx-auto text-center">
             <div class="glass rounded-lg p-12">
@@ -2952,10 +2958,10 @@ class TradeIndiaAdminSite(AdminSite):
         });
     });
 </script>
-{% endblock %}
+{% endblock %}"""
 
 # Jobs Homepage - templates/jobs/home.html
-{% extends 'base.html' %}
+JOBS_HOME_TEMPLATE = r"""{% extends 'base.html' %}
 
 {% block title %}Jobs - Find Your Dream Career | Trade India{% endblock %}
 
@@ -3127,10 +3133,10 @@ class TradeIndiaAdminSite(AdminSite):
         </div>
     </section>
 </div>
-{% endblock %}
+{% endblock %}"""
 
 # Auctions Homepage - templates/auctions/home.html
-{% extends 'base.html' %}
+AUCTIONS_HOME_TEMPLATE = r"""{% extends 'base.html' %}
 
 {% block title %}Auctions - Live Bidding & Deals | Trade India{% endblock %}
 
@@ -3247,14 +3253,14 @@ class TradeIndiaAdminSite(AdminSite):
                     
                     <div class="p-4">
                         <h3 class="text-white font-semibold mb-2">Vintage Rolex Submariner</h3>
-                        <p class="text-gray-300 text-sm mb-3">Rare 1970s model in excellent condition</p>
+                        <p class="text-gray-300 text-sm mb-3">Rare 1970 s model in excellent condition</p>
                         
                         <div class="mb-4">
                             <div class="flex justify-between text-xs text-gray-400 mb-1">
                                 <span>Current Bid</span>
-                                <span>Reserve: ₹2,50,000</span>
+                                <span>Reserve: Rs.2,50,000</span>
                             </div>
-                            <div class="text-2xl font-bold text-green-400">₹3,45,000</div>
+                            <div class="text-2xl font-bold text-green-400">Rs.3,45,000</div>
                             <div class="text-xs text-green-300">Reserve met</div>
                         </div>
                         
@@ -3303,7 +3309,7 @@ class TradeIndiaAdminSite(AdminSite):
                                 <span>Current Bid</span>
                                 <span>No Reserve</span>
                             </div>
-                            <div class="text-2xl font-bold text-green-400">₹1,25,000</div>
+                            <div class="text-2xl font-bold text-green-400">Rs.1,25,000</div>
                             <div class="text-xs text-blue-300">No reserve auction</div>
                         </div>
                         
@@ -3692,7 +3698,7 @@ class JobAlert(models.Model):
         return f"{self.user.username} - {self.alert_name}"
 
 # Enhanced templates - templates/property/home.html
-{% extends 'base.html' %}
+PROPERTY_HOME_TEMPLATE = r"""{% extends 'base.html' %}
 
 {% block title %}Property - Buy, Sell, Rent Properties in India | Trade India{% endblock %}
 
@@ -3755,10 +3761,10 @@ class JobAlert(models.Model):
                     
                     <!-- Quick Price Filters -->
                     <div class="flex flex-wrap justify-center gap-3 mt-6">
-                        <button class="price-filter px-4 py-2 glass-dark rounded-full text-white text-sm hover:bg-white hover:bg-opacity-20" data-range="0-2000000">Under ₹20 Lac</button>
-                        <button class="price-filter px-4 py-2 glass-dark rounded-full text-white text-sm hover:bg-white hover:bg-opacity-20" data-range="2000000-5000000">₹20-50 Lac</button>
-                        <button class="price-filter px-4 py-2 glass-dark rounded-full text-white text-sm hover:bg-white hover:bg-opacity-20" data-range="5000000-10000000">₹50 Lac-1 Cr</button>
-                        <button class="price-filter px-4 py-2 glass-dark rounded-full text-white text-sm hover:bg-white hover:bg-opacity-20" data-range="10000000-99999999">Above ₹1 Cr</button>
+                        <button class="price-filter px-4 py-2 glass-dark rounded-full text-white text-sm hover:bg-white hover:bg-opacity-20" data-range="0-2000000">Under Rs.20 Lac</button>
+                        <button class="price-filter px-4 py-2 glass-dark rounded-full text-white text-sm hover:bg-white hover:bg-opacity-20" data-range="2000000-5000000">Rs.20-50 Lac</button>
+                        <button class="price-filter px-4 py-2 glass-dark rounded-full text-white text-sm hover:bg-white hover:bg-opacity-20" data-range="5000000-10000000">Rs.50 Lac-1 Cr</button>
+                        <button class="price-filter px-4 py-2 glass-dark rounded-full text-white text-sm hover:bg-white hover:bg-opacity-20" data-range="10000000-99999999">Above Rs.1 Cr</button>
                     </div>
                 </div>
             </div>
@@ -3888,8 +3894,8 @@ class JobAlert(models.Model):
                         
                         <div class="flex items-center justify-between">
                             <div>
-                                <span class="text-3xl font-bold text-green-400">₹85 Lac</span>
-                                <div class="text-xs text-gray-400">₹4,595/sq ft</div>
+                                <span class="text-3xl font-bold text-green-400">Rs.85 Lac</span>
+                                <div class="text-xs text-gray-400">Rs.4,595/sq ft</div>
                             </div>
                             <div class="flex space-x-2">
                                 <button class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
@@ -3944,8 +3950,8 @@ class JobAlert(models.Model):
                         
                         <div class="flex items-center justify-between">
                             <div>
-                                <span class="text-3xl font-bold text-green-400">₹1.2 Cr</span>
-                                <div class="text-xs text-gray-400">₹5,000/sq ft</div>
+                                <span class="text-3xl font-bold text-green-400">Rs.1.2 Cr</span>
+                                <div class="text-xs text-gray-400">Rs.5,000/sq ft</div>
                             </div>
                             <div class="flex space-x-2">
                                 <button class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
@@ -4067,7 +4073,7 @@ from sklearn.metrics.                        <div id="search-suggestions" class=
                                     <ul class="space-y-2 text-gray-300">
                                         <li><a href="/motors/cars/" class="hover:text-white transition-colors">All Cars</a></li>
                                         <li><a href="/motors/cars/?fuel_type=electric" class="hover:text-white transition-colors">Electric Cars</a></li>
-                                        <li><a href="/motors/cars/?price_max=500000" class="hover:text-white transition-colors">Under ₹5 Lakh</a></li>
+                                        <li><a href="/motors/cars/?price_max=500000" class="hover:text-white transition-colors">Under Rs.5 Lakh</a></li>
                                         <li><a href="/motors/cars/?transmission=automatic" class="hover:text-white transition-colors">Automatic</a></li>
                                         <li><a href="/motors/create/" class="text-green-400 hover:text-green-300 transition-colors">
                                             <i class="fas fa-plus mr-1"></i>Sell Your Car
@@ -4692,6 +4698,8 @@ class JobCategory(models.Model):
     def __str__(self):
         return self.display_name
 
+'''  # End of PROPERTY_HOME_TEMPLATE
+
 class JobListing(models.Model):
     JOB_TYPE_CHOICES = [
         ('full_time', 'Full Time'),
@@ -5044,35 +5052,68 @@ class Bid(models.Model):
         ordering = ['-created_at']
         unique_together = ['auction', 'bidder', 'amount']
 
+"""  # End of PROPERTY_HOME_TEMPLATE
+
+# Auction models
+class AuctionListing(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    title = models.CharField(max_length=200)
+    description = models.TextField()
+    starting_price = models.DecimalField(max_digits=12, decimal_places=2)
+    current_bid = models.DecimalField(max_digits=12, decimal_places=2, default=0)
+    reserve_price = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
+    end_time = models.DateTimeField()
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        ordering = ['-created_at']
+    
+    def __str__(self):
+        return self.title
+
+class Bid(models.Model):
+    auction = models.ForeignKey(AuctionListing, on_delete=models.CASCADE, related_name='bids')
+    bidder = models.ForeignKey(User, on_delete=models.CASCADE)
+    amount = models.DecimalField(max_digits=12, decimal_places=2)
+    is_automatic = models.BooleanField(default=False)
+    max_bid = models.DecimalField(max_digits=12, decimal_places=2, null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        ordering = ['-created_at']
+        unique_together = ['auction', 'bidder', 'amount']
+
 # Enhanced templates - templates/base.html with navigation
-<!DOCTYPE html>
+ENHANCED_BASE_TEMPLATE = """<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Trade India - India's #1 Marketplace{% endblock %}</title>
+    <title>{% block title %}Trade India - India Number 1 Marketplace{% endblock %}</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         /* Enhanced glassmorphism styles */
         .glass {
             background: rgba(255, 255, 255, 0.25);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.18);
+            backdrop-filter: blur(10 px);
+            border: 1 px solid rgba(255, 255, 255, 0.18);
         }
         
         .glass-dark {
             background: rgba(0, 0, 0, 0.25);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10 px);
+            border: 1 px solid rgba(255, 255, 255, 0.1);
         }
         
         .gradient-bg {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: blue;
         }
         
         .gradient-text {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: blue;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -5080,10 +5121,10 @@ class Bid(models.Model):
         
         /* Mega menu styles */
         .mega-menu {
-            transform: translateY(-10px);
+            transform: translateY(-10 px);
             opacity: 0;
             visibility: hidden;
-            transition: all 0.3s ease;
+            transition: all 0.3 s ease;
         }
         
         .mega-menu.active {
@@ -5101,36 +5142,36 @@ class Bid(models.Model):
         
         /* Animated icons */
         .icon-bounce:hover {
-            animation: bounce 0.6s;
+            animation: bounce 0.6 s;
         }
         
         @keyframes bounce {
-            0%, 20%, 53%, 80%, 100% {
+            0 %, 20 %, 53 %, 80 %, 100 % {
                 animation-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1.000);
                 transform: translate3d(0,0,0);
             }
-            40%, 43% {
+            40 %, 43 % {
                 animation-timing-function: cubic-bezier(0.755, 0.050, 0.855, 0.060);
-                transform: translate3d(0, -10px, 0);
+                transform: translate3d(0, -10 px, 0);
             }
-            70% {
+            70 % {
                 animation-timing-function: cubic-bezier(0.755, 0.050, 0.855, 0.060);
-                transform: translate3d(0, -5px, 0);
+                transform: translate3d(0, -5 px, 0);
             }
-            90% {
-                transform: translate3d(0,-2px,0);
+            90 % {
+                transform: translate3d(0,-2 px,0);
             }
         }
         
         /* Category cards */
         .category-card {
-            transition: all 0.3s ease;
+            transition: all 0.3 s ease;
             transform: translateY(0);
         }
         
         .category-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            transform: translateY(-5 px);
+            box-shadow: 0 20 px 40 px rgba(0,0,0,0.1);
         }
     </style>
     {% block extra_css %}{% endblock %}
@@ -5165,7 +5206,13 @@ class Bid(models.Model):
                                 <i class="fas fa-search"></i>
                             </button>
                         </div>
-                        <div id="search-suggestions" class="absolute top-full left-0 w-full mt-# Extended Trade India - Complete Application with Subpages and App Router
+                        <div id="search-suggestions" class="absolute top-full left-0 w-full mt-1"></div>
+                    </div>
+                </div>
+            </nav>
+        </body>
+        </html>"""  # End of ENHANCED_BASE_TEMPLATE
+
 # Comprehensive marketplace with 20+ subpages and AI-powered features
 
 # Enhanced settings.py with additional apps and configurations
@@ -5570,11 +5617,11 @@ def motors_home(request):
     
     # Price ranges for quick filters
     price_ranges = [
-        {'label': 'Under ₹1 Lakh', 'min': 0, 'max': 100000},
-        {'label': '₹1-5 Lakhs', 'min': 100000, 'max': 500000},
-        {'label': '₹5-10 Lakhs', 'min': 500000, 'max': 1000000},
-        {'label': '₹10-20 Lakhs', 'min': 1000000, 'max': 2000000},
-        {'label': 'Above ₹20 Lakhs', 'min': 2000000, 'max': None}
+        {'label': 'Under Rs.1 Lakh', 'min': 0, 'max': 100000},
+        {'label': 'Rs.1-5 Lakhs', 'min': 100000, 'max': 500000},
+        {'label': 'Rs.5-10 Lakhs', 'min': 500000, 'max': 1000000},
+        {'label': 'Rs.10-20 Lakhs', 'min': 1000000, 'max': 2000000},
+        {'label': 'Above Rs.20 Lakhs', 'min': 2000000, 'max': None}
     ]
     
     context = {
@@ -6025,7 +6072,7 @@ class PropertyListing(models.Model):
                 </div>
                 
                 <div class="mb-6">
-                    <span class="text-4xl font-bold text-white">₹{{ listing.price|floatformat:0 }}</span>
+                    <span class="text-4xl font-bold text-white">Rs.{{ listing.price|floatformat:0 }}</span>
                     {% if listing.is_negotiable %}
                         <span class="text-green-400 ml-2">(Negotiable)</span>
                     {% endif %}
@@ -6125,7 +6172,7 @@ class PropertyListing(models.Model):
                             <h3 class="text-white font-semibold mb-2 truncate">{{ related.title }}</h3>
                             <p class="text-gray-300 text-sm mb-2">{{ related.district.name }}</p>
                             <div class="flex justify-between items-center">
-                                <span class="text-lg font-bold text-white">₹{{ related.price|floatformat:0 }}</span>
+                                <span class="text-lg font-bold text-white">Rs.{{ related.price|floatformat:0 }}</span>
                                 <a href="{% url 'listings:detail' pk=related.pk %}" 
                                    class="text-blue-400 hover:text-blue-300 text-sm">View</a>
                             </div>
@@ -6198,7 +6245,7 @@ class PropertyListing(models.Model):
             <!-- Price and Condition -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                    <label class="block text-white text-sm font-semibold mb-2">Price (₹) *</label>
+                    <label class="block text-white text-sm font-semibold mb-2">Price (Rs.) *</label>
                     <input type="number" 
                            name="price" 
                            step="0.01"
@@ -6803,12 +6850,12 @@ class DatabaseRouter:
         return True
     
     def allow_migrate(self, db, app_label, model_name=None, **hints):
-        """Ensure that certain apps' models get created on the right database."""
+        '''Ensure that certain apps models get created on the right database.'''
         return True
 
 # Docker configuration files
 # docker-compose.yml
-"""
+DOCKER_COMPOSE_YML = """
 version: '3.8'
 
 services:
@@ -6876,7 +6923,7 @@ volumes:
 """
 
 # Dockerfile
-"""
+DOCKERFILE_CONTENT = """
 FROM python:3.11-slim
 
 WORKDIR /app
@@ -6943,7 +6990,7 @@ http {
 
 # Production deployment script
 # deploy.sh
-"""
+DEPLOY_SCRIPT = """
 #!/bin/bash
 set -e
 
@@ -7227,7 +7274,7 @@ print("✅ API with pagination and filtering")
 print("=" * 60)
 print("📱 Features included:")
 print("- Multi-image upload with thumbnails")
-print("- AI genuineness scoring (99.2% accuracy)")
+print("- AI genuineness scoring (99.2 % accuracy)")
 print("- Real-time search suggestions")
 print("- Location-based filtering")
 print("- User verification system")
