@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Trade India - Buy & Sell Anything{% endblock %}</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* Glassmorphism styles */
+        .glass {
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+        
+        .glass-dark {
+            background: rgba(0, 0, 0, 0.25);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        /* Custom gradients */
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .gradient-text {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        /* Animation classes */
+        .animate-float {
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .hover-scale {
+            transition: transform 0.3s ease;
+        }
+        
+        .hover-scale:hover {
+            transform: scale(1.05);
+        }
+        
+        /* Search suggestions */
+        .suggestions-dropdown {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        /* Card hover effects */
+        .listing-card {
+            transition: all 0.3s ease;
+        }
+        
+        .listing-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+<body class="min-h-screen bg-gradient-to-br from-purple-400 via-pink-500 to-red-500">
+    <!-- Navigation -->
+    <nav class="glass sticky top-0 z-50 p-4">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+            <div class="flex items-center space-x-4">
+                <a href="/" class="text-2xl font-bold gradient-text">
+                    <i class="fas fa-exchange-alt mr-2"></i>Trade India
+                </a>
+                
+                <!-- Search Bar -->
+                <div class="hidden md:block relative">
+                    <div class="flex items-center glass rounded-full px-4 py-2 w-96">
+                        <input type="text" 
+                               id="global-search" 
+                               placeholder="Search for anything..." 
+                               class="bg-transparent w-full outline-none text-white placeholder-gray-300">
+                        <button class="text-white ml-2">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                    <div id="search-suggestions" class="suggestions-dropdown absolute top-full left-0 w-full mt-1 glass-dark rounded-lg hidden"></div>
+                </div>
+            </div>
+            
+            <div class="flex items-center space-x-4">
+                {% if user.is_authenticated %}
+                    <a href="{% url 'listings:create' %}" class="glass-dark px-4 py-2 rounded-full text-white hover:bg-white hover:bg-opacity-20 transition-all">
+                        <i class="fas fa-plus mr-2"></i>Sell Item
+                    </a>
+                    <div class="relative">
+                        <button id="user-menu-btn" class="flex items-center space-x-2 glass-dark px-3 py-2 rounded-full">
+                            {% if user.profile_image %}
+                                <img src="{{ user.profile_image.url }}" alt="Profile" class="w-8 h-8 rounded-full">
+                            {% else %}
+                                <div class="w-8 h-8 bg-gradient-to-r from-blue-400 to-purple-500 rounded-full flex items-center justify-center text-white font-bold">
+                                    {{ user.username|first|upper }}
+                                </div>
+                            {% endif %}
+                            <span class="text-white">{{ user.username }}</span>
+                            <i class="fas fa-chevron-down text-white text-sm"></i>
+                        </button>
+                        <div id="user-menu" class="absolute right-0 mt-2 w-48 glass-dark rounded-lg hidden">
+                            <a href="{% url 'accounts:profile' %}" class="block px-4 py-2 text-white hover:bg-white hover:bg-opacity-10 rounded-t-lg">
+                                <i class="fas fa-user mr-2"></i>Profile
+                            </a>
+                            <a href="#" class="block px-4 py-2 text-white hover:bg-white hover:bg-opacity-10">
+                                <i class="fas fa-heart mr-2"></i>Favorites
+                            </a>
+                            <a href="#" class="block px-4 py-2 text-white hover:bg-white hover:bg-opacity-10">
+                                <i class="fas fa-list mr-2"></i>My Listings
+                            </a>
+                            <hr class="border-gray-600 my-2">
+                            <a href="/admin/logout/" class="block px-4 py-2 text-white hover:bg-white hover:bg-opacity-10 rounded-b-lg">
+                                <i class="fas fa-sign-out-alt mr-2"></i>Logout
+                            </a>
+                        </div>
+                    </div>
+                {% else %}
+                    <a href="{% url 'accounts:login' %}" class="glass-dark px-4 py-2 rounded-full text-white hover:bg-white hover:bg-opacity-20 transition-all">
+                        Login
+                    </a>
+                    <a href="{% url 'accounts:register' %}" class="bg-white bg-opacity-20 px-4 py-2 rounded-full text-white hover:bg-opacity-30 transition-all">
+                        Register
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="min-h-screen">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="glass-dark mt-20 py-12">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <h3 class="text-xl font-bold text-white mb-4 gradient-text">Trade India</h3>
+                    <p class="text-gray-300">India's most trusted platform for buying and selling everything.</p>
+                </div>
+                <div>
+                    <h4 class="font-semibold text-white mb-4">Quick Links</h4>
+                    <ul class="space-y-2 text-gray-300">
+                        <li><a href="#" class="hover:text-white">About Us</a></li>
+                        <li><a href="#" class="hover:text-white">How it Works</a></li>
+                        <li><a href="#" class="hover:text-white">Safety Tips</a></li>
+                        <li><a href="#" class="hover:text-white">Contact</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold text-white mb-4">Categories</h4>
+                    <ul class="space-y-2 text-gray-300">
+                        <li><a href="#" class="hover:text-white">Electronics</a></li>
+                        <li><a href="#" class="hover:text-white">Vehicles</a></li>
+                        <li><a href="#" class="hover:text-white">Property</a></li>
+                        <li><a href="#" class="hover:text-white">Fashion</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold text-white mb-4">Connect</h4>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-300 hover:text-white">
+                            <i class="fab fa-facebook text-2xl"></i>
+                        </a>
+                        <a href="#" class="text-gray-300 hover:text-white">
+                            <i class="fab fa-twitter text-2xl"></i>
+                        </a>
+                        <a href="#" class="text-gray-300 hover:text-white">
+                            <i class="fab fa-instagram text-2xl"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <hr class="border-gray-600 my-8">
+            <div class="text-center text-gray-300">
+                <p>&copy; 2025 Trade India. All rights reserved. | Built with Django & AI</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/alpinejs/3.10.3/cdn.min.js" defer></script>
+    <script>
+        // Global search functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.getElementById('global-search');
+            const suggestionsDiv = document.getElementById('search-suggestions');
+            let searchTimeout;
+
+            if (searchInput) {
+                searchInput.addEventListener('input', function() {
+                    clearTimeout(searchTimeout);
+                    const query = this.value.trim();
+                    
+                    if (query.length < 2) {
+                        suggestionsDiv.classList.add('hidden');
+                        return;
+                    }
+                    
+                    searchTimeout = setTimeout(() => {
+                        fetch(`/search/suggestions/?q=${encodeURIComponent(query)}`)
+                            .then(response => response.json())
+                            .then(data => {
+                                displaySuggestions(data.suggestions);
+                            })
+                            .catch(error => console.error('Search error:', error));
+                    }, 300);
+                });
+
+                // Close suggestions when clicking outside
+                document.addEventListener('click', function(event) {
+                    if (!searchInput.contains(event.target) && !suggestionsDiv.contains(event.target)) {
+                        suggestionsDiv.classList.add('hidden');
+                    }
+                });
+            }
+
+            // User menu toggle
+            const userMenuBtn = document.getElementById('user-menu-btn');
+            const userMenu = document.getElementById('user-menu');
+            
+            if (userMenuBtn && userMenu) {
+                userMenuBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    userMenu.classList.toggle('hidden');
+                });
+
+                // Close menu when clicking outside
+                document.addEventListener('click', function(event) {
+                    if (!userMenuBtn.contains(event.target) && !userMenu.contains(event.target)) {
+                        userMenu.classList.add('hidden');
+                    }
+                });
+            }
+        });
+
+        function displaySuggestions(suggestions) {
+            const suggestionsDiv = document.getElementById('search-suggestions');
+            let html = '';
+            
+            if (suggestions.categories && suggestions.categories.length > 0) {
+                html += '<div class="p-2 border-b border-gray-600"><small class="text-gray-400">Categories</small></div>';
+                suggestions.categories.forEach(cat => {
+                    html += `<a href="/listings/?category=${cat.slug}" class="block px-4 py-2 text-white hover:bg-white hover:bg-opacity-10">${cat.name}</a>`;
+                });
+            }
+            
+            if (suggestions.listings && suggestions.listings.length > 0) {
+                html += '<div class="p-2 border-b border-gray-600"><small class="text-gray-400">Listings</small></div>';
+                suggestions.listings.forEach(listing => {
+                    html += `<a href="/listings/${listing.pk}/" class="block px-4 py-2 text-white hover:bg-white hover:bg-opacity-10 truncate">${listing.title}</a>`;
+                });
+            }
+            
+            if (suggestions.locations && suggestions.locations.length > 0) {
+                html += '<div class="p-2 border-b border-gray-600"><small class="text-gray-400">Locations</small></div>';
+                suggestions.locations.forEach(loc => {
+                    html += `<a href="/listings/?state=${loc.code}" class="block px-4 py-2 text-white hover:bg-white hover:bg-opacity-10">${loc.name}</a>`;
+                });
+            }
+            
+            if (html) {
+                suggestionsDiv.innerHTML = html;
+                suggestionsDiv.classList.remove('hidden');
+            } else {
+                suggestionsDiv.classList.add('hidden');
+            }
+        }
+
+        // Favorite functionality
+        function toggleFavorite(listingId) {
+            fetch(`/listings/${listingId}/favorite/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+                    'Content-Type': 'application/json',
+                },
+            })
+            .then(response => response.json())
+            .then(data => {
+                const btn = document.querySelector(`[data-listing-id="${listingId}"]`);
+                const icon = btn.querySelector('i');
+                
+                if (data.is_favorited) {
+                    icon.classList.remove('far');
+                    icon.classList.add('fas', 'text-red-500');
+                } else {
+                    icon.classList.remove('fas', 'text-red-500');
+                    icon.classList.add('far');
+                }
+            });
+        }
+    </script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>
