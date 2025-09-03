@@ -1018,6 +1018,7 @@ urlpatterns = [
 ]
 
 # templates/base.html
+TEMPLATES_BASE_HTML = """
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -1324,10 +1325,13 @@ urlpatterns = [
         }
     </script>
     {% block extra_js %}{% endblock %}
+
 </body>
 </html>
+"""
 
 # templates/index.html
+TEMPLATES_INDEX_HTML_PART1 = """
 {% extends 'base.html' %}
 
 {% block content %}
@@ -1463,7 +1467,7 @@ urlpatterns = [
                             <i class="far fa-heart text-xl"></i>
                         </button>
                     </div>
-
+"""
 
 
 class TradeIndiaAdminSite(AdminSite):
@@ -2196,7 +2200,9 @@ print("- RESTful API with versioning")
 print("- Docker containerization ready")
 print("=" * 70)
 print("🚀 Production-ready with 10,000+ lines of code!")
-print("Run: python manage.py generate_sample_data --motors 1000")    function animateCounters() {
+print("Run: python manage.py generate_sample_data --motors 1000")
+TEMPLATES_INDEX_JS_AND_END = """
+    function animateCounters() {
         const counters = ['live-auctions', 'active-bidders', 'ending-soon'];
         
         counters.forEach(id => {
@@ -2233,10 +2239,12 @@ print("Run: python manage.py generate_sample_data --motors 1000")    function an
             }
         });
     }, 5000);
-</script>
+ </script>
 {% endblock %}
+"""
 
 # Advanced Search & Filters - templates/search/advanced.html
+TEMPLATES_ADVANCED_SEARCH_HTML = """
 {% extends 'base.html' %}
 
 {% block title %}Advanced Search - Find Exactly What You Need | Trade India{% endblock %}
@@ -2544,9 +2552,11 @@ print("Run: python manage.py generate_sample_data --motors 1000")    function an
             </div>
         </div>
     </div>
-</div>
+ </div>
 {% endblock %}
+"""
 
+TEMPLATES_ADVANCED_SEARCH_HTML_JS = """
 {% block extra_js %}
 <script>
     function clearFilters() {
@@ -2571,8 +2581,9 @@ print("Run: python manage.py generate_sample_data --motors 1000")    function an
     document.getElementById('advanced-search-form').addEventListener('change', function() {
         setTimeout(performSearch, 500); // Debounce
     });
-</script>
+ </script>
 {% endblock %}
+"""
 
 # Community & Forums - community/models.py
 from django.db import models
@@ -2867,29 +2878,9 @@ class TradeIndiaAdminSite(AdminSite):
     """Custom admin site for Trade India"""
     site_header = 'Trade India Administration'
     site_title = 'Trade India Admin'
-    index_title = '    <!-- CTA Section -->
-    <section class="py-16 px-4">
-        <div class="max-w-4xl mx-auto text-center">
-            <div class="glass rounded-lg p-12">
-                <h2 class="text-4xl font-bold text-white mb-6">
-                    Start Your Property Journey Today
-                </h2>
-                <p class="text-xl text-gray-200 mb-8">
-                    Whether buying, selling, or renting - we have the perfect property solution for you
-                </p>
-                <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                    <a href="/property/create/" class="bg-gradient-to-r from-green-500 to-blue-600 text-white px-8 py-4 rounded-lg font-semibold hover:from-green-600 hover:to-blue-700 transition-all inline-flex items-center justify-center">
-                        <i class="fas fa-plus mr-2"></i>List Your Property
-                    </a>
-                    <a href="/property/browse/" class="bg-gradient-to-r from-blue-500 to-purple-600 text-white px-8 py-4 rounded-lg font-semibold hover:from-blue-600 hover:to-purple-700 transition-all inline-flex items-center justify-center">
-                        <i class="fas fa-search mr-2"></i>Browse Properties
-                    </a>
-                </div>
-            </div>
-        </div>
-    </section>
-</div>
+    index_title = 'Trade India Management Dashboard'
 
+TEMPLATES_PROPERTY_HOME_HTML_CONT = """
 {% endblock %}
 
 {% block extra_js %}
@@ -2955,6 +2946,7 @@ class TradeIndiaAdminSite(AdminSite):
 {% endblock %}
 
 # Jobs Homepage - templates/jobs/home.html
+TEMPLATES_JOBS_HOME_HTML = """
 {% extends 'base.html' %}
 
 {% block title %}Jobs - Find Your Dream Career | Trade India{% endblock %}
@@ -3128,8 +3120,10 @@ class TradeIndiaAdminSite(AdminSite):
     </section>
 </div>
 {% endblock %}
+"""
 
 # Auctions Homepage - templates/auctions/home.html
+TEMPLATES_AUCTIONS_HOME_HTML = """
 {% extends 'base.html' %}
 
 {% block title %}Auctions - Live Bidding & Deals | Trade India{% endblock %}
@@ -3360,7 +3354,7 @@ class TradeIndiaAdminSite(AdminSite):
             </div>
         </div>
     </section>
-</div>
+ </div>
 
 {% endblock %}
 
@@ -3394,7 +3388,27 @@ class TradeIndiaAdminSite(AdminSite):
         animateCounters();
     });
     
-    function animateCounters()# AI-powered recommendation system - ai_verification/ml_models.py
+    function animateCounters() {
+        const counters = ['live-auctions', 'active-bidders', 'ending-soon'];
+        counters.forEach(id => {
+            const element = document.getElementById(id);
+            if (!element) return;
+            const target = parseInt(element.textContent.replace(/,/g, '')) || 0;
+            let current = 0;
+            const increment = Math.max(1, Math.floor(target / 50));
+            const timer = setInterval(() => {
+                current += increment;
+                if (current >= target) {
+                    element.textContent = target.toLocaleString();
+                    clearInterval(timer);
+                } else {
+                    element.textContent = current.toLocaleString();
+                }
+            }, 40);
+        });
+    }
+"""
+# AI-powered recommendation system - ai_verification/ml_models.py
 import numpy as np
 import pandas as pd
 from sklearn.ensemble import RandomForestRegressor
@@ -3692,6 +3706,7 @@ class JobAlert(models.Model):
         return f"{self.user.username} - {self.alert_name}"
 
 # Enhanced templates - templates/property/home.html
+TEMPLATES_PROPERTY_HOME_HTML = """
 {% extends 'base.html' %}
 
 {% block title %}Property - Buy, Sell, Rent Properties in India | Trade India{% endblock %}
@@ -6146,8 +6161,9 @@ class PropertyListing(models.Model):
     function changeMainImage(imageUrl) {
         document.querySelector('#main-image img').src = imageUrl;
     }
-</script>
+ </script>
 {% endblock %}
+"""
 
 # templates/listings/create.html
 {% extends 'base.html' %}
