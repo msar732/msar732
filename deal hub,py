@@ -4,7 +4,15 @@ import pandas as pd
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
-from django.core.cache import cache
+try:
+    from django.core.cache import cache
+except Exception:
+    class _DummyCache:
+        def get(self, *args, **kwargs):
+            return None
+        def set(self, *args, **kwargs):
+            return None
+    cache = _DummyCache()
 import joblib
 import os
 
@@ -296,6 +304,7 @@ class JobAlert(models.Model):
         return f"{self.user.username} - {self.alert_name}"
 
 # Enhanced templates - templates/property/home.html
+TEMPLATES_AND_DOCS = r'''
 {% extends 'base.html' %}
 
 {% block title %}Property - Buy, Sell, Rent Properties in India | Trade India{% endblock %}
@@ -330,6 +339,7 @@ class JobAlert(models.Model):
                             <i class="fas fa-map mr-2"></i>Plots & Land
                         </button>
                     </div>
+'''
                     
                     <!-- Search Form -->
                     <form class="grid grid-cols-1 md:grid-cols-4 gap-4" id="property-search-form">
